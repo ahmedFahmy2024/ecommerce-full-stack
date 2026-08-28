@@ -14,7 +14,7 @@ import * as React from "react";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { FeatureTableShell } from "@/components/data-table/feature-table-shell";
 import { useAdvancedFiltersActive } from "@/hooks/use-advanced-filters-active";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import { SortOrderEnum } from "../schemas/users-in-class";
 import type { UserInClass } from "../types/users-in-class";
 import { UsersInClassFilterSheet } from "./users-in-class-filter-sheet";

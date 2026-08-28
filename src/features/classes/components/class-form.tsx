@@ -23,7 +23,7 @@ import {
   CLASSES_UPDATE,
   STAGES,
 } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import { type ClassFormValues, makeClassFormSchema } from "../schemas/form";
 import type { Class, ClassBatch, ClassCategory, ClassStage } from "../types";
 

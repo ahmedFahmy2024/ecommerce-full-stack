@@ -12,7 +12,7 @@ import { EntityTableActionBar } from "@/components/data-table/entity-table-actio
 import { FeatureTableShell } from "@/components/data-table/feature-table-shell";
 import { Badge } from "@/components/ui/badge";
 import { BATCHES_DELETE, BATCHES_DETAILS } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import type {
   DataTableRowAction,
   TableActionsConfig,

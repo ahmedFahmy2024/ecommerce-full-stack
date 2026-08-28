@@ -25,18 +25,31 @@ function isAlwaysAllowed(pathname: string): boolean {
   );
 }
 
+/**
+ * Legacy permission gate — Edge middleware cannot import the full API client
+ * (Edge runtime + `auth` wrapper). This direct `fetch` is the *only* Nest
+ * API call allowed outside `services/api/client.ts` / `services/api/auth.ts`.
+ * It uses the dashboard platform key (`NEXT_PUBLIC_DASHBOARD_API_KEY`,
+ * header `X-Access-Api`) and Bearer token, and will be replaced in T21 by
+ * `GET /auth/me` via the new client (authoritative permissions from
+ * `UserResource` + `role_permissions`). The endpoint `GET /users/:id/permissions`
+ * is legacy (not in Nest `users.controller.ts`); it returns 404 on the new
+ * backend and is treated as empty permissions until T21.
+ */
 async function fetchUserPermissions(
   userId: string,
   accessToken: string | undefined,
   origin: string,
 ): Promise<Set<string>> {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY || "";
+  // Dashboard platform key — never log, never use the old `NEXT_PUBLIC_API_KEY` name.
+  const apiKey = process.env.NEXT_PUBLIC_DASHBOARD_API_KEY || "";
   try {
     const res = await fetch(`${baseUrl}/users/${userId}/permissions`, {
       headers: {
         accept: "application/json",
         "X-Access-Api": apiKey,
+        "x-lang": "en",
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
       // Edge runtime — no caching across requests; we want per-user freshness
@@ -91,7 +104,9 @@ export const proxy = auth(async (req) => {
           req.nextUrl.origin,
         );
 
-        const required = Array.isArray(requirement) ? requirement : [requirement];
+        const required = Array.isArray(requirement)
+          ? requirement
+          : [requirement];
         const hasAny = required.some((p) => permissions.has(p));
 
         if (!hasAny) {

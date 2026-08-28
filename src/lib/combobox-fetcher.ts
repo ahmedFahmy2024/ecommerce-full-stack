@@ -1,5 +1,5 @@
-import apiClient from "@/services/api";
-import type { PaginatedResponse } from "@/types/api";
+import { request } from "@/services/api";
+import type { PaginatedResponse } from "@/types/pagination";
 
 export interface ComboboxFetcherEntity {
   id: string;
@@ -21,21 +21,37 @@ export interface ComboboxFetcherPage<T> {
 }
 
 /**
- * Builds a paginated infinite-combobox fetcher for an endpoint name.
- * The endpoint must return PaginatedResponse<T>.
+ * Builds a paginated infinite-combobox fetcher for a resource path.
+ * Legacy helper — old pages still call it with endpoint name strings like
+ * `USERS`, `MATERIALS`, etc. (from `services/api/queries.ts`). New code
+ * should call `request` directly with explicit `path` and typed pagination
+ * from `services/api/contracts.ts` (`PaginatedData<T>`).
+ *
+ * @param path - Resource path below `/v1` (e.g. `/users`, `/materials`) or
+ *   legacy endpoint name chunk. A leading slash is added if missing.
+ * @deprecated — legacy UI only, uses old `PaginatedResponse` shape.
  */
-export function makeComboboxFetcher<T = ComboboxFetcherEntity>(
-  endpointName: string,
-) {
+export function makeComboboxFetcher<T = ComboboxFetcherEntity>(path: string) {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return async ({
     page,
     limit,
     search,
   }: ComboboxFetcherParams): Promise<ComboboxFetcherPage<T>> => {
-    const res = await apiClient<PaginatedResponse<T>>(endpointName, {
+    const res = await request<PaginatedResponse<T>>({
+      path: normalizedPath,
       query: { page, limit, ...(search ? { search } : {}) },
     });
-    return { items: res.data.items, hasNextPage: res.data.meta.hasNextPage };
+    // `request` unwraps `ApiSuccess.data` and returns `PaginatedResponse` directly
+    // (or `undefined` for 204/empty). Legacy pages expect `res.data.items`,
+    // but new transport returns `res.items` — handle both.
+    const data =
+      (res as unknown as { data?: PaginatedResponse<T> })?.data ?? res;
+    if (!data) return { items: [], hasNextPage: false };
+    return {
+      items: data.items ?? [],
+      hasNextPage: data.meta?.hasNextPage ?? false,
+    };
   };
 }
 

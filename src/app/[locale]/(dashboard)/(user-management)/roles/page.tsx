@@ -17,7 +17,7 @@ import { CRUD } from "@/lib/authz/permissions";
 import { buildTableQuery } from "@/lib/table-query";
 import apiClient from "@/services/api";
 import { ROLES } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 
 interface RolesPageProps {
   searchParams: Promise<SearchParams>;

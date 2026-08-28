@@ -21,7 +21,7 @@ import {
   CATEGORIES,
   STAGES,
 } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import { type BatchFormValues, makeBatchFormSchema } from "../schemas/form";
 import type { BatchDetail } from "../types";
 

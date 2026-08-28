@@ -13,7 +13,7 @@ import { EntityTableActionBar } from "@/components/data-table/entity-table-actio
 import { FeatureTableShell } from "@/components/data-table/feature-table-shell";
 import { useMaterialsOptions } from "@/features/materials/hooks/use-materials-options";
 import { CLASSES_DELETE } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import type {
   DataTableRowAction,
   TableActionsConfig,

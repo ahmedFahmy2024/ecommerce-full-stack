@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import apiClient from "@/services/api";
 import { PERMISSIONS } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import type { Permission } from "../types";
 import {
   ACTION_ORDER,

@@ -13,7 +13,7 @@ import { CRUD } from "@/lib/authz/permissions";
 import { buildTableQuery } from "@/lib/table-query";
 import apiClient from "@/services/api";
 import { STAGES } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 
 interface StagesPageProps {
   searchParams: Promise<SearchParams>;

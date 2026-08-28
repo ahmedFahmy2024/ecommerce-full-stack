@@ -19,7 +19,7 @@ import {
   STAGES_CREATE,
   STAGES_UPDATE,
 } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import { makeStageFormSchema, type StageFormValues } from "../schemas/form";
 import type { StageDetail } from "../types";
 

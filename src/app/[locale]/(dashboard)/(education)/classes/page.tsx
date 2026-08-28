@@ -16,7 +16,7 @@ import { CRUD } from "@/lib/authz/permissions";
 import { serializeSort } from "@/lib/parsers";
 import apiClient from "@/services/api";
 import { CLASSES } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 
 interface ClassesPageProps {
   searchParams: Promise<SearchParams>;

@@ -2,21 +2,22 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { Material } from "@/features/materials/types";
-import apiClient from "@/services/api";
-import { MATERIALS } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import { request } from "@/services/api";
 import type { Option } from "@/types/data-table";
+import type { PaginatedResponse } from "@/types/pagination";
 
 export function useMaterialsOptions(enabled: boolean) {
   return useQuery({
-    queryKey: [MATERIALS, "options"],
+    queryKey: ["materials", "options"],
     queryFn: async () => {
-      const res = await apiClient<PaginatedResponse<Material>>(MATERIALS, {
+      const res = await request<PaginatedResponse<Material>>({
+        path: "/materials",
         query: { limit: 200 },
       });
-      return res.data.items.map<Option>((m) => ({
-        label: m.name,
-        value: m.id,
+      const data = res as unknown as PaginatedResponse<Material> | undefined;
+      return (data?.items ?? []).map<Option>((m: Material) => ({
+        label: (m as unknown as { name: string }).name,
+        value: (m as unknown as { id: string }).id,
       }));
     },
     enabled,

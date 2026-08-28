@@ -11,7 +11,7 @@ import { DeleteRowDialog } from "@/components/data-table/delete-row-dialog";
 import { EntityTableActionBar } from "@/components/data-table/entity-table-action-bar";
 import { FeatureTableShell } from "@/components/data-table/feature-table-shell";
 import { USERS_DELETE } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 import type {
   DataTableRowAction,
   TableActionsConfig,

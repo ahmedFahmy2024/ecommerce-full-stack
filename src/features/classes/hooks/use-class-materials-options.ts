@@ -1,8 +1,7 @@
 "use client";
 
 import { useEntityOptions } from "@/hooks/use-entity-options";
-import apiClient from "@/services/api";
-import { CLASSES_MATERIALS } from "@/services/api/queries";
+import { request } from "@/services/api";
 
 interface ClassMaterialItem {
   id: string;
@@ -11,12 +10,17 @@ interface ClassMaterialItem {
 
 export function useClassMaterialsOptions(classId: string, enabled: boolean) {
   return useEntityOptions<ClassMaterialItem>({
-    queryKey: [CLASSES_MATERIALS, classId, "options"],
+    queryKey: ["classes", classId, "materials", "options"],
     fetcher: async () => {
-      const res = await apiClient<ClassMaterialItem[]>(CLASSES_MATERIALS, {
+      const res = await request<ClassMaterialItem[]>({
+        path: "/classes/{id}/materials",
         params: { id: classId },
       });
-      return res.data;
+      return (
+        (res as unknown as { data?: ClassMaterialItem[] })?.data ??
+        (res as unknown as ClassMaterialItem[]) ??
+        []
+      );
     },
     toOption: (m) => ({
       label: m.title.en || m.title.ar,

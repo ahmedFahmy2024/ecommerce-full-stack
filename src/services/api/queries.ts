@@ -1,3 +1,11 @@
+/**
+ * @deprecated Old dashboard endpoint registry — kept only for legacy pages
+ * that will be deleted in T70. New code must use `services/api/client.ts`
+ * with typed `path` strings (`/products`, `/auth/login`, etc.) and
+ * `services/api/contracts.ts` types. See `services/api/index.ts` barrel.
+ * No new feature may import from this file.
+ */
+
 //* System Users Auth *//
 export const SYSTEM_USERS_LOGIN = "systemUsersLogin";
 export const SYSTEM_USERS_LOGOUT = "systemUsersLogout";

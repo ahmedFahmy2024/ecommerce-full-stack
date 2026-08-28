@@ -15,7 +15,7 @@ import type { UserInClass } from "@/features/classes/types/users-in-class";
 import { buildTableQuery } from "@/lib/table-query";
 import apiClient from "@/services/api";
 import { CLASSES_BELONG_USERS } from "@/services/api/queries";
-import type { PaginatedResponse } from "@/types/api";
+import type { PaginatedResponse } from "@/types/pagination";
 
 interface ViewClassPageProps {
   params: Promise<{ id: string }>;

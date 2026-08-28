@@ -64,7 +64,7 @@ export default async function ViewBatchPage({ params }: ViewBatchPageProps) {
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Status</p>
-          <Badge variant={STATUS_VARIANT[batch.status] ?? "secondary"}>
+          <Badge variant={STATUS_VARIANT[batch.status as BatchStatus] ?? "secondary"}>
             {batch.status}
           </Badge>
         </div>

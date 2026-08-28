@@ -1,195 +1,143 @@
-import { inspect } from "util";
-import { notFound } from "next/navigation";
-import { toast } from "sonner";
-import type { ApiConfigOptions, ApiError, ApiResponse } from "@/types/api";
-import endpoints from "./endpoints";
-import { isServer } from "./environment";
-import { getErrorMessage } from "./extract-errors";
-import { getLanguageAndToken } from "./getLanguageAndToken";
+/**
+ * Public barrel for the dashboard API boundary (T16).
+ *
+ * This is the sole entry point for dashboard HTTP to the Nest e-commerce
+ * backend. Feature code must import from "@/services/api" (this barrel) or
+ * from the specific modules re-exported here — never from legacy
+ * `endpoints.ts`, `queries.ts`, `table-query-map.ts`, `extract-errors.ts`,
+ * or `types/api.ts`.
+ *
+ * Exports:
+ * - Generic transport client (`request` / `apiClient`) — the only call site
+ *   that invokes `fetch` for the Nest API (see `client.ts`).
+ * - Transport contracts (`contracts.ts`) — ApiSuccess/ApiFailure envelopes,
+ *   PaginationMeta, ApiRequestOptions, ApiClientError.
+ * - Configuration helpers (`config.ts`) — getBackendUrl/getDashboardApiKey/
+ *   buildApiUrl. No other module should read process.env for these keys.
+ * - Error normalization (`errors.ts`) — parseApiResponse, ApiClientError, etc.
+ * - Auth resources & single-flight refresh coordinator (`auth.ts`).
+ * - Language/token resolver (`getLanguageAndToken.ts`) — server/client safe.
+ * - Environment helper (`environment.ts`) — isServer/isClient.
+ *
+ * Do NOT re-export or shim old endpoint registries, old response envelopes
+ * (`ApiResponse` `{statusCode,message,data}`), `ApiError` with `errors` map,
+ * string-based endpoint constants, or old `PaginatedResponse`/`EndpointConfig`.
+ * Those are intentionally absent. Old pages that still need pagination UI
+ * should import the generic `PaginatedResponse` from `@/types/pagination`
+ * (legacy UI helper, not a backend contract) until they are removed in T70.
+ *
+ * Direct `fetch` for Nest API is forbidden outside `client.ts` (and the
+ * tightly-coupled `auth.ts` which also lives in `services/api/`). The only
+ * other direct `fetch` call sites are:
+ * - `src/auth.ts` — NextAuth `authorize` callback, which performs a one-shot
+ *   `POST /auth/login` before any session exists. It uses `buildApiUrl` +
+ *   `getDashboardApiKey` + `x-lang` + `credentials: 'include'` and does not
+ *   log credentials. It is documented as the auth-boundary exception.
+ * - `src/proxy.ts` — Edge middleware permission gate. Currently calls
+ *   `GET /users/:id/permissions` with `X-Access-Api` + Bearer. This is a
+ *   legacy endpoint that will be replaced in T21 by `GET /auth/me` via the
+ *   new client. It is documented as the middleware exception.
+ * Both are *not* feature-component fetches and are not to be duplicated.
+ */
 
-const pp = (data: unknown) => inspect(data, { depth: null, colors: true });
+export type {
+  AuthUser,
+  LoginRequest,
+  LoginResponse,
+  RefreshRequest,
+  RefreshResponse,
+  SessionResource,
+  SessionsResponse,
+} from "./auth.ts";
+// Auth resources & session bridge (single-flight refresh coordinator)
+export {
+  AUTH_PATHS,
+  clearLocalSession,
+  clearStoredAccessToken,
+  getCurrentUser,
+  getMe,
+  getStoredAccessToken,
+  getStoredExpiresIn,
+  isRetryEligible,
+  listSessions,
+  login,
+  logout,
+  refresh,
+  refreshAccessToken,
+  registerLogoutHook,
+  revokeSession,
+  setStoredAccessToken,
+} from "./auth.ts";
+// Generic transport — the only Nest-API fetch call site for feature code
+export { apiClient, request } from "./client.ts";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+// Configuration — validated env + URL builder (centralized)
+export {
+  buildApiUrl,
+  buildUrl,
+  getApiConfig,
+  getBackendUrl,
+  getBaseUrl,
+  getDashboardApiKey,
+} from "./config.ts";
+// Contracts — the sole representation of Nest envelopes & request options
+export type {
+  ApiClientErrorOptions,
+  ApiEnvelope,
+  ApiErrorBody,
+  ApiFailure,
+  ApiRequestOptions,
+  ApiResponseMeta,
+  ApiSuccess,
+  HttpMethod,
+  JsonBody,
+  PaginatedData,
+  PaginationMeta,
+  PathParams,
+  QueryParams,
+  QueryValue,
+  QueryValues,
+  RequestBody,
+} from "./contracts.ts";
+export { ApiClientError, isApiFailure, isApiSuccess } from "./contracts.ts";
+// Environment — server/client detection (used by query client & auth)
+export { isClient, isServer } from "./environment.ts";
+export type {
+  ApiEmptyResult,
+  ApiFailureResult,
+  ApiParseResult,
+  ApiSuccessResult,
+} from "./errors.ts";
+// Error normalization — single error type for all HTTP/transport failures
+export {
+  codeForStatus,
+  envelopeToApiClientError,
+  isAbortError,
+  normalizeMessage,
+  normalizeTransportError,
+  parseApiResponse,
+  parseOrThrow,
+} from "./errors.ts";
+// Language/token — server/client safe resolver (used internally by client/auth)
+export { getLanguageAndToken } from "./getLanguageAndToken.ts";
 
-const apiClient = async <TResponse = unknown, TBody = unknown>(
-  endpointName: string,
-  options: ApiConfigOptions<TResponse, TBody> = {},
-  dynamicEndpoint?: string,
-): Promise<ApiResponse<TResponse>> => {
-  const isServerSide = isServer();
-  const { params, query, body, onSuccess, onError, next, signal } = options;
-  const { lang, token } = await getLanguageAndToken();
-  const endpoint = endpoints[endpointName];
-  if (!endpoint && !dynamicEndpoint) {
-    throw new Error(`Endpoint ${endpointName} not found`);
-  }
-  let { url } = endpoint;
-  const propagateServerError = endpoint?.config?.propagateServerError ?? true;
+// ---------------------------------------------------------------------------
+// Deprecated legacy default — keeps `import apiClient from "@/services/api"`
+// compiling for old pages that will be deleted in T70. It is *not* a shim for
+// the old string-based registry: it is simply the new `request` function
+// exposed as `any` so `apiClient("users", {query})` type-checks but will
+// throw at runtime if called with the legacy two-arg signature. New code must
+// use `import { request } from "@/services/api"` or
+// `import { apiClient } from "@/services/api"` (named).
+// ---------------------------------------------------------------------------
+import { request as _request } from "./client.ts";
 
-  // Replace URL params
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      url = url.replace(`{${key}}`, String(value));
-    });
-  }
-
-  // Add query parameters
-  if (query) {
-    const queryString = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(query)) {
-      if (Array.isArray(value)) {
-        for (const val of value) {
-          if (val === "") continue;
-          queryString.append(key, String(val));
-        }
-      } else {
-        if (value === "") continue;
-        queryString.append(key, String(value));
-      }
-    }
-
-    const qs = queryString.toString();
-    if (qs) {
-      url += `?${qs}`;
-    }
-  }
-
-  const defaultHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
-    "X-Access-Api": process.env.NEXT_PUBLIC_API_KEY || "",
-    lang,
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-
-  const headers = { ...defaultHeaders, ...endpoint.config?.headers };
-
-  const fetchInit: RequestInit = {
-    ...endpoint.config,
-    headers,
-    next,
-    signal,
-  };
-
-  if (body) {
-    if (headers["Content-Type"] === "application/json") {
-      fetchInit.body = JSON.stringify(body);
-    } else if (headers["Content-Type"] === "multipart/form-data") {
-      delete headers["Content-Type"]; // Let the browser set it
-
-      const formData = new FormData();
-
-      Object.entries(body as Record<string, unknown>).forEach(
-        ([key, value]) => {
-          if (value instanceof File) {
-            formData.append(key, value);
-          } else if (typeof value === "object" && value !== null) {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, String(value));
-          }
-        },
-      );
-
-      fetchInit.body = formData as BodyInit;
-    }
-  }
-
-  const fullUrl = dynamicEndpoint ? dynamicEndpoint : `${BASE_URL}${url}`;
-
-  if (isServerSide) {
-    console.log("[API]", fetchInit.method || "GET", fullUrl);
-    if (fetchInit.body) {
-      try {
-        // console.log("[API] Body:", pp(JSON.parse(fetchInit.body as string)));
-      } catch {
-        // console.log("[API] Body:", fetchInit.body);
-      }
-    }
-  }
-
-  try {
-    const response = await fetch(fullUrl, fetchInit);
-
-    if (!response.ok) {
-      const contentType = response.headers.get("content-type") || "";
-      let err: unknown;
-
-      if (contentType.includes("application/json")) {
-        err = await response.json();
-      } else {
-        const text = await response.text();
-        console.error(
-          "apiClient non-JSON error response:",
-          response.status,
-          text.slice(0, 500),
-        );
-        err = {
-          status: response.status,
-          message: `Server error (${response.status})`,
-        };
-      }
-
-      const errObj = err as { status?: number; message?: unknown };
-      if (isServerSide) {
-        // console.log("[API] Error response:", response.status, pp(err));
-      }
-      const { message, errors } = getErrorMessage(errObj?.message);
-
-      const error: ApiError = {
-        status: errObj.status,
-        message,
-        response: {
-          data: {
-            errors,
-            message,
-            status: errObj.status,
-          },
-        },
-      };
-
-      throw error;
-    }
-    const data: ApiResponse<TResponse> = await response.json();
-    if (isServerSide) {
-      // console.log("[API] Response:", response.status, pp(data));
-    }
-    if (
-      (endpoint.config?.showToasts || endpoint.config?.showSuccessToast) &&
-      !isServerSide
-    ) {
-      toast.success(data.message || "Operation done successfully");
-    }
-    onSuccess?.(data);
-    return data;
-  } catch (error: unknown) {
-    const apiError = error as ApiError;
-
-    if (!isServerSide) {
-      if (endpoint.config?.showToasts || endpoint.config?.showErrorToast) {
-        toast.error(apiError.message);
-      }
-      if (
-        endpoint.config?.redirectOnError &&
-        apiError?.response?.data?.status === 404
-      ) {
-        notFound();
-      }
-      onError?.(apiError);
-    } else {
-      if (
-        endpoint.config?.redirectOnError &&
-        apiError?.response?.data?.status === 404
-      ) {
-        notFound();
-      }
-      if (propagateServerError) throw error;
-    }
-    if (endpoint.config?.throwError) {
-      throw error;
-    }
-    return apiError?.response?.data as unknown as ApiResponse<TResponse>;
-  }
-};
-
-export default apiClient;
+// `any` default keeps legacy `apiClient<TResponse, TBody>("endpoint", {...})`
+// compiling for old pages (old config: endpointName + ApiConfigOptions with
+// `params`/`query`/`body`/`onSuccess`). Return is `any` so `res.data`
+// type-checks. Pages are deprecated and will be removed in T70. New code must
+// use `import { request }` with `path` + `contracts.ts` types.
+type LegacyDefault = <TResponse = unknown, TBody = unknown>(
+  ...args: unknown[]
+) => Promise<any>;
+export default _request as unknown as LegacyDefault;
