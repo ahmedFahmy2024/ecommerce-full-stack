@@ -1,0 +1,96 @@
+{
+  "columns": {
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "status": "الحالة",
+    "gender": "الجنس",
+    "country": "الدولة",
+    "roles": "الأدوار",
+    "createdAt": "تاريخ الإنشاء",
+    "onlyWithoutParent": "بدون ولي أمر"
+  },
+  "filters": {
+    "search": "بحث",
+    "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+    "onlyWithoutParent": "بدون ولي أمر فقط",
+    "onlyChildren": "الأبناء فقط"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "banned": "محظور"
+  },
+  "gender": {
+    "male": "ذكر",
+    "female": "أنثى"
+  },
+  "actions": {
+    "create": "إنشاء مستخدم",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض"
+  },
+  "actionBar": {
+    "selected": "تم اختيار {count}",
+    "delete": "حذف"
+  },
+  "empty": "لا يوجد مستخدمون.",
+  "form": {
+    "createTitle": "إنشاء مستخدم",
+    "editTitle": "تعديل مستخدم",
+    "sections": {
+      "basicInfo": "المعلومات الأساسية",
+      "account": "الحساب",
+      "settings": "الإعدادات"
+    },
+    "fields": {
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "أدخل الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل البريد الإلكتروني",
+      "phone": "الهاتف",
+      "phonePlaceholder": "أدخل رقم الهاتف",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "passwordDescription": "اتركها فارغة للإبقاء على كلمة المرور الحالية",
+      "gender": "الجنس",
+      "genderPlaceholder": "اختر الجنس",
+      "birthDate": "تاريخ الميلاد",
+      "status": "الحالة",
+      "statusPlaceholder": "اختر الحالة",
+      "country": "الدولة",
+      "countryPlaceholder": "ابحث عن الدولة...",
+      "roles": "الأدوار",
+      "rolesPlaceholder": "ابحث عن الأدوار...",
+      "graduationYear": "سنة التخرج",
+      "graduationYearPlaceholder": "مثال: 2025",
+      "telegramCode": "كود تيليغرام",
+      "telegramCodePlaceholder": "أدخل كود تيليغرام",
+      "fingerprint": "البصمة",
+      "fingerprintPlaceholder": "أدخل البصمة",
+      "fingerprintStatus": "تفعيل البصمة",
+      "backgroundApp": "تطبيق الخلفية",
+      "addToHomeScreen": "إضافة للشاشة الرئيسية",
+      "notes": "ملاحظات",
+      "notesEnPlaceholder": "ملاحظات (إنجليزي)",
+      "notesArPlaceholder": "ملاحظات (عربي)"
+    },
+    "submit": {
+      "create": "إنشاء مستخدم",
+      "update": "حفظ التغييرات",
+      "creating": "جارٍ الإنشاء...",
+      "updating": "جارٍ الحفظ..."
+    },
+    "errors": {
+      "fullNameRequired": "الاسم الكامل مطلوب",
+      "emailInvalid": "عنوان بريد إلكتروني غير صالح",
+      "passwordTooShort": "يجب أن لا تقل كلمة المرور عن 8 أحرف",
+      "genderRequired": "النوع مطلوب",
+      "birthDateRequired": "تاريخ الميلاد مطلوب",
+      "statusRequired": "الحالة مطلوبة",
+      "countryRequired": "الدولة مطلوبة"
+    },
+    "cancel": "إلغاء"
+  }
+}

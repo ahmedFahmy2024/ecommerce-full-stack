@@ -1,0 +1,58 @@
+{
+  "columns": {
+    "title": "العنوان",
+    "category": "الفئة",
+    "status": "الحالة",
+    "createdAt": "تاريخ الإنشاء"
+  },
+  "filters": {
+    "search": "بحث",
+    "searchPlaceholder": "ابحث بعنوان المرحلة..."
+  },
+  "status": {
+    "active": "نشط",
+    "not_active": "غير نشط"
+  },
+  "actions": {
+    "create": "إنشاء مرحلة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض"
+  },
+  "actionBar": {
+    "selected": "تم اختيار {count}",
+    "delete": "حذف"
+  },
+  "empty": "لا توجد مراحل.",
+  "form": {
+    "createTitle": "إنشاء مرحلة",
+    "editTitle": "تعديل المرحلة",
+    "cancel": "إلغاء",
+    "sections": {
+      "title": "العنوان",
+      "details": "التفاصيل"
+    },
+    "fields": {
+      "titleEn": "العنوان (إنجليزي)",
+      "titleEnPlaceholder": "أدخل العنوان بالإنجليزية",
+      "titleAr": "العنوان (عربي)",
+      "titleArPlaceholder": "أدخل العنوان بالعربية",
+      "status": "الحالة",
+      "statusPlaceholder": "اختر الحالة",
+      "category": "الفئة",
+      "categoryPlaceholder": "ابحث عن فئة..."
+    },
+    "submit": {
+      "create": "إنشاء مرحلة",
+      "update": "حفظ التغييرات",
+      "creating": "جارٍ الإنشاء...",
+      "updating": "جارٍ الحفظ..."
+    },
+    "errors": {
+      "titleEnRequired": "العنوان بالإنجليزية مطلوب",
+      "titleArRequired": "العنوان بالعربية مطلوب",
+      "statusRequired": "الحالة مطلوبة",
+      "categoryRequired": "الفئة مطلوبة"
+    }
+  }
+}

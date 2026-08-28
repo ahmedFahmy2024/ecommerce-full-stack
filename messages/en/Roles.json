@@ -1,0 +1,84 @@
+{
+  "title": "Roles",
+  "columns": {
+    "name": "Name",
+    "guardName": "Guard",
+    "permissions": "Permissions"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by role name..."
+  },
+  "guardName": {
+    "admin": "Admin",
+    "user": "User"
+  },
+  "actions": {
+    "create": "Create Role",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "actionBar": {
+    "selected": "{count} selected",
+    "delete": "Delete"
+  },
+  "empty": "No roles found.",
+  "form": {
+    "createTitle": "Create Role",
+    "editTitle": "Edit Role",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "permissions": "Permissions"
+    },
+    "fields": {
+      "nameEn": "Name (English)",
+      "nameEnPlaceholder": "Enter role name in English",
+      "nameAr": "Name (Arabic)",
+      "nameArPlaceholder": "Enter role name in Arabic",
+      "guardName": "Guard",
+      "guardNamePlaceholder": "Select guard",
+      "permissions": "Permissions",
+      "permissionsPlaceholder": "Search permissions...",
+      "permissionsDescription": "Pick a resource on the left, then choose which actions this role can perform. Use presets to apply common combinations quickly."
+    },
+    "submit": {
+      "create": "Create Role",
+      "update": "Save Changes",
+      "creating": "Creating...",
+      "updating": "Saving..."
+    },
+    "errors": {
+      "nameEnRequired": "English name is required",
+      "nameArRequired": "Arabic name is required",
+      "guardNameRequired": "Guard is required",
+      "permissionsRequired": "At least one permission is required"
+    },
+    "cancel": "Cancel"
+  },
+  "permissionsSelector": {
+    "selectedCount": "{count} selected",
+    "applyToAll": "Apply to all:",
+    "searchPlaceholder": "Search resources or actions...",
+    "noResults": "No matching resources.",
+    "empty": "No permissions available.",
+    "other": "Other",
+    "otherActions": "Other actions",
+    "selectAll": "Select all",
+    "selectResource": "Select a resource to manage its permissions.",
+    "actions": {
+      "VIEW": "View",
+      "LIST": "List",
+      "READ": "Read",
+      "CREATE": "Create",
+      "UPDATE": "Update",
+      "DELETE": "Delete"
+    },
+    "presets": {
+      "view": "View only",
+      "editor": "Editor",
+      "full": "Full",
+      "clear": "Clear"
+    }
+  }
+}

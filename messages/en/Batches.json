@@ -1,0 +1,72 @@
+{
+  "columns": {
+    "title": "Title",
+    "category": "Category",
+    "stage": "Stage",
+    "status": "Status",
+    "createdAt": "Created At"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by batch title..."
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "finished": "Finished",
+    "deleted": "Deleted"
+  },
+  "actions": {
+    "create": "Create Batch",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "actionBar": {
+    "selected": "{count} selected",
+    "delete": "Delete"
+  },
+  "empty": "No batches found.",
+  "form": {
+    "createTitle": "Create Batch",
+    "editTitle": "Edit Batch",
+    "cancel": "Cancel",
+    "sections": {
+      "title": "Title",
+      "details": "Details",
+      "relations": "Relations",
+      "notes": "Notes"
+    },
+    "fields": {
+      "titleEn": "Title (English)",
+      "titleEnPlaceholder": "Enter title in English",
+      "titleAr": "Title (Arabic)",
+      "titleArPlaceholder": "أدخل العنوان بالعربية",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "category": "Category",
+      "categoryPlaceholder": "Search category...",
+      "stage": "Stage",
+      "stagePlaceholder": "Search stage...",
+      "stageDisabledPlaceholder": "Select a category first",
+      "notesEn": "Notes (English)",
+      "notesEnPlaceholder": "Enter notes in English",
+      "notesAr": "Notes (Arabic)",
+      "notesArPlaceholder": "أدخل الملاحظات بالعربية"
+    },
+    "submit": {
+      "create": "Create Batch",
+      "update": "Save Changes",
+      "creating": "Creating...",
+      "updating": "Saving..."
+    },
+    "errors": {
+      "titleEnRequired": "English title is required",
+      "titleArRequired": "Arabic title is required",
+      "statusRequired": "Status is required",
+      "categoryRequired": "Category is required",
+      "stageRequired": "Stage is required"
+    }
+  }
+}

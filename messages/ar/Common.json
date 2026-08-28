@@ -1,0 +1,60 @@
+{
+  "sidebar": {
+    "general": "عام",
+    "overview": "نظرة عامة",
+    "analytics": "التحليلات",
+    "reports": "التقارير",
+    "userManagement": "إدارة المستخدمين",
+    "users": "المستخدمون",
+    "students": "الطلاب",
+    "instructors": "المدربون",
+    "supervisors": "المشرفون",
+    "roles": "الأدوار",
+    "education": "التعليم",
+    "categories": "الفئات",
+    "stages": "المراحل",
+    "batches": "المجموعات",
+    "classes": "الفصول",
+    "materials": "المواد",
+    "learningResources": "موارد التعلم",
+    "quizzes": "الاختبارات",
+    "forms": "النماذج",
+    "banners": "البنرات",
+    "geography": "الجغرافيا",
+    "countries": "الدول",
+    "cities": "المدن",
+    "districts": "الأحياء",
+    "securitySystem": "الأمان والنظام",
+    "permissions": "الصلاحيات",
+    "auditLogs": "سجلات التدقيق",
+    "notifications": "الإشعارات",
+    "userSettings": "إعدادات المستخدم",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "security": "الأمان",
+    "authentication": "المصادقة",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "forgotPassword": "نسيت كلمة المرور",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "list": "القائمة",
+    "create": "إنشاء",
+    "adminDashboard": "لوحة تحكم المسؤول",
+    "dashboard": "لوحة القيادة"
+  },
+  "language": {
+    "switcher": "اللغة",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "nav": {
+    "dashboard": "لوحة القيادة",
+    "currentPage": "الصفحة الحالية"
+  },
+  "deleteDialog": {
+    "title": "هل أنت متأكد؟",
+    "description": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف السجل نهائياً.",
+    "confirm": "حذف",
+    "cancel": "إلغاء"
+  }
+}

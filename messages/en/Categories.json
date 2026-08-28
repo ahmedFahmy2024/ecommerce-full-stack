@@ -1,0 +1,54 @@
+{
+  "columns": {
+    "title": "Title",
+    "status": "Status",
+    "createdAt": "Created At"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by category title..."
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "actions": {
+    "create": "Create Category",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "actionBar": {
+    "selected": "{count} selected",
+    "delete": "Delete"
+  },
+  "empty": "No categories found.",
+  "form": {
+    "createTitle": "Create Category",
+    "editTitle": "Edit Category",
+    "cancel": "Cancel",
+    "sections": {
+      "title": "Title",
+      "details": "Details"
+    },
+    "fields": {
+      "titleEn": "Title (English)",
+      "titleEnPlaceholder": "Enter title in English",
+      "titleAr": "Title (Arabic)",
+      "titleArPlaceholder": "أدخل العنوان بالعربية",
+      "status": "Status",
+      "statusPlaceholder": "Select status"
+    },
+    "submit": {
+      "create": "Create Category",
+      "update": "Save Changes",
+      "creating": "Creating...",
+      "updating": "Saving..."
+    },
+    "errors": {
+      "titleEnRequired": "English title is required",
+      "titleArRequired": "Arabic title is required",
+      "statusRequired": "Status is required"
+    }
+  }
+}

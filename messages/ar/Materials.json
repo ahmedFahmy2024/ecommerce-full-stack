@@ -1,0 +1,157 @@
+{
+  "columns": {
+    "name": "الاسم",
+    "status": "الحالة",
+    "materialType": "نوع المادة",
+    "materialDetailType": "نوع الجلسة",
+    "sessionsCount": "الجلسات",
+    "classesCount": "المجموعات",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "createdAt": "تاريخ الإنشاء"
+  },
+  "filters": {
+    "search": "بحث",
+    "searchPlaceholder": "ابحث باسم المادة...",
+    "materialType": "نوع المادة",
+    "materialDetailType": "نوع الجلسة",
+    "classId": "المجموعة",
+    "batchId": "الدفعة",
+    "stageId": "المرحلة",
+    "supervisorId": "المشرف"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "materialType": {
+    "SUBJECT": "مادة دراسية",
+    "COMMUNITY": "مجتمع",
+    "QURAN": "قرآن"
+  },
+  "materialDetailType": {
+    "LIVE": "مباشر",
+    "RECORDED": "مسجّل",
+    "RECORDED_LIMIT": "مسجّل (محدود)",
+    "BOTH": "كلاهما",
+    "PRESENCE": "حضور"
+  },
+  "actions": {
+    "create": "إنشاء مادة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض"
+  },
+  "actionBar": {
+    "selected": "تم اختيار {count}",
+    "delete": "حذف"
+  },
+  "empty": "لا توجد مواد.",
+  "form": {
+    "createTitle": "إنشاء مادة",
+    "editTitle": "تعديل المادة",
+    "cancel": "إلغاء",
+    "sections": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "media": "الوسائط والسياسات",
+      "materialDetails": "تفاصيل المادة"
+    },
+    "steps": {
+      "next": "التالي",
+      "back": "السابق",
+      "indicator": "الخطوة {current} من {total}: {title}",
+      "title": {
+        "title": "العنوان",
+        "description": "أدخل اسم المادة بالعربية والإنجليزية"
+      },
+      "description": {
+        "title": "الوصف",
+        "description": "ملخّص قصير يظهر للطلاب"
+      },
+      "media": {
+        "title": "الوسائط والسياسات",
+        "description": "صورة الغلاف، الفيديو التجريبي، وقواعد السياسة"
+      },
+      "materialDetails": {
+        "title": "الجلسات",
+        "description": "اضبط تفصيلًا واحدًا أو أكثر للجلسات"
+      }
+    },
+    "fields": {
+      "titleEn": "العنوان (إنجليزي)",
+      "titleEnPlaceholder": "English title",
+      "titleAr": "العنوان (عربي)",
+      "titleArPlaceholder": "العنوان بالعربية",
+      "descriptionEn": "الوصف (إنجليزي)",
+      "descriptionEnPlaceholder": "English description",
+      "descriptionAr": "الوصف (عربي)",
+      "descriptionArPlaceholder": "الوصف بالعربية",
+      "coverId": "معرف صورة الغلاف",
+      "coverIdPlaceholder": "UUID الوسائط",
+      "mediaIdDescription": "ارفع الملف أولاً عبر الوسائط، ثم ألصق معرّفه هنا.",
+      "demoVideo": "رابط فيديو تجريبي",
+      "demoVideoPlaceholder": "https://...",
+      "policies": "السياسات (JSON)",
+      "policiesPlaceholder": "'{' \"allowDownload\": true '}'",
+      "policiesDescription": "اختياري. يجب أن يكون JSON صالحًا."
+    },
+    "actions": {
+      "addDetail": "إضافة تفصيل",
+      "removeDetail": "إزالة التفصيل"
+    },
+    "submit": {
+      "create": "إنشاء",
+      "update": "تحديث",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث..."
+    },
+    "errors": {
+      "invalidJson": "يجب أن تكون السياسات بصيغة JSON صحيحة.",
+      "titleEnRequired": "العنوان بالإنجليزية مطلوب",
+      "titleArRequired": "العنوان بالعربية مطلوب",
+      "materialDetailRequired": "مطلوب تفصيل مادة واحد على الأقل"
+    },
+    "detail": {
+      "heading": "تفصيل #{index}",
+      "fields": {
+        "type": "نوع الجلسة",
+        "typePlaceholder": "اختر النوع",
+        "materialType": "نوع المادة",
+        "materialTypePlaceholder": "اختر نوع المادة",
+        "instructor": "المدرّس",
+        "instructorPlaceholder": "اختر المدرّس",
+        "supervisor": "المشرف",
+        "supervisorPlaceholder": "اختر المشرف",
+        "stage": "المرحلة",
+        "stagePlaceholder": "اختر المرحلة",
+        "batch": "الدفعة",
+        "batchPlaceholder": "اختر الدفعة",
+        "class": "المجموعة",
+        "classPlaceholder": "اختر المجموعة",
+        "telegramCode": "كود تيليجرام",
+        "telegramCodePlaceholder": "TG_CODE_001",
+        "startDate": "تاريخ البداية",
+        "endDate": "تاريخ النهاية",
+        "evaluationForm": "نموذج التقييم",
+        "attendForm": "نموذج الحضور",
+        "quizForm": "نموذج الاختبار",
+        "formPlaceholder": "اختر نموذجًا",
+        "countSession": "عدد الجلسات",
+        "durationBtwTest": "المدة بين الاختبارات (بالدقائق)",
+        "maxAttempt": "الحد الأقصى للجلسات يوميًا",
+        "closeQuizAfterHours": "إغلاق الاختبار بعد (ساعة)",
+        "closeEvalAfterHours": "إغلاق التقييم بعد (ساعة)",
+        "closeAttendAfterHours": "إغلاق الحضور بعد (ساعة)",
+        "sendLiveLinkBeforeHours": "إرسال رابط البث قبل (ساعة)",
+        "showTotalResult": "عرض النتيجة الإجمالية",
+        "showResultAttendance": "عرض نتيجة الحضور",
+        "showEvaluation": "عرض التقييم",
+        "showQuiz": "عرض الاختبار",
+        "allowResultToInstructor": "السماح بعرض النتيجة للمدرّس",
+        "allowResultToSupervisor": "السماح بعرض النتيجة للمشرف",
+        "isActive": "نشط"
+      }
+    }
+  }
+}

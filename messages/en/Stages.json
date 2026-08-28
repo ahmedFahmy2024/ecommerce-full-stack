@@ -1,0 +1,58 @@
+{
+  "columns": {
+    "title": "Title",
+    "category": "Category",
+    "status": "Status",
+    "createdAt": "Created At"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by stage title..."
+  },
+  "status": {
+    "active": "Active",
+    "not_active": "Inactive"
+  },
+  "actions": {
+    "create": "Create Stage",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "actionBar": {
+    "selected": "{count} selected",
+    "delete": "Delete"
+  },
+  "empty": "No stages found.",
+  "form": {
+    "createTitle": "Create Stage",
+    "editTitle": "Edit Stage",
+    "cancel": "Cancel",
+    "sections": {
+      "title": "Title",
+      "details": "Details"
+    },
+    "fields": {
+      "titleEn": "Title (English)",
+      "titleEnPlaceholder": "Enter title in English",
+      "titleAr": "Title (Arabic)",
+      "titleArPlaceholder": "أدخل العنوان بالعربية",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "category": "Category",
+      "categoryPlaceholder": "Search category..."
+    },
+    "submit": {
+      "create": "Create Stage",
+      "update": "Save Changes",
+      "creating": "Creating...",
+      "updating": "Saving..."
+    },
+    "errors": {
+      "titleEnRequired": "English title is required",
+      "titleArRequired": "Arabic title is required",
+      "statusRequired": "Status is required",
+      "categoryRequired": "Category is required"
+    }
+  }
+}

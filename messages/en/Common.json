@@ -1,0 +1,60 @@
+{
+  "sidebar": {
+    "general": "General",
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "userManagement": "User Management",
+    "users": "Users",
+    "students": "Students",
+    "instructors": "Instructors",
+    "supervisors": "Supervisors",
+    "roles": "Roles",
+    "education": "Education",
+    "categories": "Categories",
+    "stages": "Stages",
+    "batches": "Batches",
+    "classes": "Classes",
+    "materials": "Materials",
+    "learningResources": "Learning Resources",
+    "quizzes": "Quizzes",
+    "forms": "Forms",
+    "banners": "Banners",
+    "geography": "Geography",
+    "countries": "Countries",
+    "cities": "Cities",
+    "districts": "Districts",
+    "securitySystem": "Security & System",
+    "permissions": "Permissions",
+    "auditLogs": "Audit Logs",
+    "notifications": "Notifications",
+    "userSettings": "User Settings",
+    "profile": "Profile",
+    "settings": "Settings",
+    "security": "Security",
+    "authentication": "Authentication",
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "list": "List",
+    "create": "Create",
+    "adminDashboard": "Admin Dashboard",
+    "dashboard": "Dashboard"
+  },
+  "language": {
+    "switcher": "Language",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "currentPage": "Current Page"
+  },
+  "deleteDialog": {
+    "title": "Are you sure?",
+    "description": "This action cannot be undone. The record will be permanently deleted.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  }
+}

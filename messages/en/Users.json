@@ -1,0 +1,96 @@
+{
+  "columns": {
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "gender": "Gender",
+    "country": "Country",
+    "roles": "Roles",
+    "createdAt": "Created At",
+    "onlyWithoutParent": "Without Parent"
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search by name or email...",
+    "onlyWithoutParent": "Without parent only",
+    "onlyChildren": "Children only"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "banned": "Banned"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
+  },
+  "actions": {
+    "create": "Create User",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View"
+  },
+  "actionBar": {
+    "selected": "{count} selected",
+    "delete": "Delete"
+  },
+  "empty": "No users found.",
+  "form": {
+    "createTitle": "Create User",
+    "editTitle": "Edit User",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "account": "Account",
+      "settings": "Settings"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter email address",
+      "phone": "Phone",
+      "phonePlaceholder": "Enter phone number",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "passwordDescription": "Leave blank to keep current password",
+      "gender": "Gender",
+      "genderPlaceholder": "Select gender",
+      "birthDate": "Birth Date",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "country": "Country",
+      "countryPlaceholder": "Search country...",
+      "roles": "Roles",
+      "rolesPlaceholder": "Search roles...",
+      "graduationYear": "Graduation Year",
+      "graduationYearPlaceholder": "e.g. 2025",
+      "telegramCode": "Telegram Code",
+      "telegramCodePlaceholder": "Enter Telegram code",
+      "fingerprint": "Fingerprint",
+      "fingerprintPlaceholder": "Enter fingerprint",
+      "fingerprintStatus": "Fingerprint Active",
+      "backgroundApp": "Background Application",
+      "addToHomeScreen": "Add to Home Screen",
+      "notes": "Notes",
+      "notesEnPlaceholder": "Notes (English)",
+      "notesArPlaceholder": "Notes (Arabic)"
+    },
+    "submit": {
+      "create": "Create User",
+      "update": "Save Changes",
+      "creating": "Creating...",
+      "updating": "Saving..."
+    },
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "emailInvalid": "Invalid email address",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "genderRequired": "Gender is required",
+      "birthDateRequired": "Birth date is required",
+      "statusRequired": "Status is required",
+      "countryRequired": "Country is required"
+    },
+    "cancel": "Cancel"
+  }
+}

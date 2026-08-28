@@ -1,0 +1,84 @@
+{
+  "title": "الأدوار",
+  "columns": {
+    "name": "الاسم",
+    "guardName": "النوع",
+    "permissions": "الصلاحيات"
+  },
+  "filters": {
+    "search": "بحث",
+    "searchPlaceholder": "ابحث باسم الدور..."
+  },
+  "guardName": {
+    "admin": "مشرف",
+    "user": "مستخدم"
+  },
+  "actions": {
+    "create": "إنشاء دور",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض"
+  },
+  "actionBar": {
+    "selected": "{count} محدد",
+    "delete": "حذف"
+  },
+  "empty": "لا توجد أدوار.",
+  "form": {
+    "createTitle": "إنشاء دور",
+    "editTitle": "تعديل الدور",
+    "sections": {
+      "basicInfo": "المعلومات الأساسية",
+      "permissions": "الصلاحيات"
+    },
+    "fields": {
+      "nameEn": "الاسم (إنجليزي)",
+      "nameEnPlaceholder": "أدخل اسم الدور بالإنجليزية",
+      "nameAr": "الاسم (عربي)",
+      "nameArPlaceholder": "أدخل اسم الدور بالعربية",
+      "guardName": "النوع",
+      "guardNamePlaceholder": "اختر النوع",
+      "permissions": "الصلاحيات",
+      "permissionsPlaceholder": "ابحث عن صلاحيات...",
+      "permissionsDescription": "اختر موردًا من القائمة الجانبية، ثم حدد الإجراءات المسموح بها لهذا الدور. استخدم الإعدادات السريعة لتطبيق التركيبات الشائعة."
+    },
+    "submit": {
+      "create": "إنشاء الدور",
+      "update": "حفظ التغييرات",
+      "creating": "جارٍ الإنشاء...",
+      "updating": "جارٍ الحفظ..."
+    },
+    "errors": {
+      "nameEnRequired": "الاسم بالإنجليزية مطلوب",
+      "nameArRequired": "الاسم بالعربية مطلوب",
+      "guardNameRequired": "النوع مطلوب",
+      "permissionsRequired": "يجب اختيار صلاحية واحدة على الأقل"
+    },
+    "cancel": "إلغاء"
+  },
+  "permissionsSelector": {
+    "selectedCount": "{count} محدد",
+    "applyToAll": "تطبيق على الكل:",
+    "searchPlaceholder": "ابحث عن مورد أو إجراء...",
+    "noResults": "لا توجد نتائج مطابقة.",
+    "empty": "لا توجد صلاحيات متاحة.",
+    "other": "أخرى",
+    "otherActions": "إجراءات أخرى",
+    "selectAll": "تحديد الكل",
+    "selectResource": "اختر موردًا لإدارة صلاحياته.",
+    "actions": {
+      "VIEW": "عرض",
+      "LIST": "قائمة",
+      "READ": "قراءة",
+      "CREATE": "إنشاء",
+      "UPDATE": "تعديل",
+      "DELETE": "حذف"
+    },
+    "presets": {
+      "view": "عرض فقط",
+      "editor": "محرر",
+      "full": "كامل",
+      "clear": "مسح"
+    }
+  }
+}
