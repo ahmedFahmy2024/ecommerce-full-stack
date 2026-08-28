@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "test": "node --experimental-strip-types --test src/services/api/config.test.ts src/services/api/errors.test.ts src/services/api/client.test.ts src/services/api/auth.test.ts",
+    "test": "node --experimental-strip-types --test src/services/api/config.test.ts src/services/api/errors.test.ts src/services/api/client.test.ts src/services/api/auth.test.ts src/services/api/query-keys.test.ts src/lib/get-query-client.test.ts",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {

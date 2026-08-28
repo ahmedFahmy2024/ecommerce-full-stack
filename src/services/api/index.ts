@@ -102,6 +102,25 @@ export {
   parseApiResponse,
   parseOrThrow,
 } from "./errors.ts";
+export type { ListFilters } from "./query-keys.ts";
+// Query key factories — stable TanStack Query keys (T20). No component may construct
+// a key from a raw string literal; import factories from here instead.
+export {
+  authKeys,
+  categoriesKeys,
+  couponsKeys,
+  inventoryKeys,
+  mediaKeys,
+  ordersKeys,
+  productMediaKeys,
+  productsKeys,
+  queryKeys,
+  reviewsKeys,
+  shipmentsKeys,
+  shippingMethodsKeys,
+  usersKeys,
+  variantsKeys,
+} from "./query-keys.ts";
 export type { UnauthenticatedResult as SessionUnauthenticated } from "./session.client.ts";
 // Session — client-only access token store (must not be imported by server/Edge)
 export {

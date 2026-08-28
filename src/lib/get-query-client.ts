@@ -2,15 +2,15 @@ import {
   defaultShouldDehydrateQuery,
   QueryClient,
 } from "@tanstack/react-query";
-import { isServer } from "@/services/api/environment";
-import { ApiClientError } from "@/services/api/contracts";
+import { ApiClientError } from "../services/api/contracts.ts";
+import { isServer } from "../services/api/environment.ts";
 
 // Source-verified via opensrc: TanStack Query `QueryClient` defaultOptions.queries.retry
 // defaults to false for `query-core` when undefined (QueryClient.ts:366), but we
 // make the contract explicit per TASK T20 / AGENTS.md data tables: never retry
 // auth/validation/conflict. `retry: (count, error) => boolean` is the documented
 // `RetryValue` signature from `query-core/src/retryer.ts:34` (ShouldRetryFunction).
-function shouldRetryQuery(
+export function shouldRetryQuery(
   _failureCount: number,
   error: unknown,
 ): boolean {

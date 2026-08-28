@@ -1,11 +1,11 @@
 "use client";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { DirectionProvider } from "@/components/ui/direction";
-import { getDirection } from "@/lib/direction";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { NextIntlClientProvider, type Locale } from "next-intl";
 import type { AbstractIntlMessages } from "next-intl";
+import { type Locale, NextIntlClientProvider } from "next-intl";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { DirectionProvider } from "@/components/ui/direction";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { getDirection } from "@/lib/direction";
 import { QueryProvider } from "./query-provider";
 
 interface AppProvidersProps {
