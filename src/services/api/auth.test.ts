@@ -67,7 +67,9 @@ beforeEach(() => {
   __setLanguageAndTokenForTest(
     async () =>
       ({ lang: "en", token: undefined }) as unknown as Awaited<
-        ReturnType<typeof import("./getLanguageAndToken.ts").getLanguageAndToken>
+        ReturnType<
+          typeof import("./getLanguageAndToken.ts").getLanguageAndToken
+        >
       >,
   );
 });
@@ -113,7 +115,9 @@ function failureBody(overrides: {
       statusCode: overrides.statusCode,
       message: overrides.message,
       code: overrides.code,
-      ...(overrides.details !== undefined ? { details: overrides.details } : {}),
+      ...(overrides.details !== undefined
+        ? { details: overrides.details }
+        : {}),
     },
     meta: { timestamp: new Date().toISOString(), path: "/test" },
   });
@@ -124,7 +128,11 @@ function createMockResponse(init: {
   body?: string;
   headers?: Record<string, string>;
 }) {
-  const { status, body = "", headers = { "content-type": "application/json" } } = init;
+  const {
+    status,
+    body = "",
+    headers = { "content-type": "application/json" },
+  } = init;
   const ok = status >= 200 && status < 300;
   return {
     status,
@@ -158,7 +166,9 @@ function stubLangClient(lang: string, token?: string) {
   __setLanguageAndTokenForTest(
     async () =>
       ({ lang: lang as unknown as "en", token }) as unknown as Awaited<
-        ReturnType<typeof import("./getLanguageAndToken.ts").getLanguageAndToken>
+        ReturnType<
+          typeof import("./getLanguageAndToken.ts").getLanguageAndToken
+        >
       >,
   );
 }
@@ -189,13 +199,22 @@ describe("auth — browser-direct login includes credentials: include", () => {
       },
     };
     const captures: Captured[] = [];
-    captureFetchSequence([{ status: 200, body: successBody(loginData) }], captures);
+    captureFetchSequence(
+      [{ status: 200, body: successBody(loginData) }],
+      captures,
+    );
 
-    const result = await login({ email: "admin@example.com", password: "secret" });
+    const result = await login({
+      email: "admin@example.com",
+      password: "secret",
+    });
     assert.equal(result.accessToken, "new-access-token-abc");
     assert.equal(getAccessToken(), "new-access-token-abc");
     const headers = captures[0].init.headers as Record<string, string>;
-    assert.equal(headers["X-Access-Api"], "test-dashboard-key-32-chars-minimum-ok");
+    assert.equal(
+      headers["X-Access-Api"],
+      "test-dashboard-key-32-chars-minimum-ok",
+    );
     assert.equal(headers["x-lang"], "en");
     assert.equal((captures[0].init as RequestInit).credentials, "include");
     assert.equal(headers.Authorization, undefined);
@@ -223,8 +242,16 @@ describe("auth — browser-direct login includes credentials: include", () => {
       },
     };
     const captures: Captured[] = [];
-    captureFetchSequence([{ status: 200, body: successBody(loginData) }], captures);
-    await login({ email: "a@b.com", password: "p", deviceId: "dev123", deviceName: "Chrome" });
+    captureFetchSequence(
+      [{ status: 200, body: successBody(loginData) }],
+      captures,
+    );
+    await login({
+      email: "a@b.com",
+      password: "p",
+      deviceId: "dev123",
+      deviceName: "Chrome",
+    });
     const body = captures[0].init.body as string;
     const parsed = JSON.parse(body as string) as Record<string, unknown>;
     assert.equal(parsed.deviceId, "dev123");
@@ -235,10 +262,20 @@ describe("auth — browser-direct login includes credentials: include", () => {
     // Verify auth.ts does not export a module-global `let _accessToken` that is
     // importable from server code. It should delegate to session.client.ts which
     // is marked "use client" and throws if imported on server.
-    const authSource = readFileSync(join(process.cwd(), "src/services/api/auth.ts"), "utf8");
-    assert.equal(authSource.includes("let _accessToken"), false, "auth.ts must not have module-global _accessToken");
+    const authSource = readFileSync(
+      join(process.cwd(), "src/services/api/auth.ts"),
+      "utf8",
+    );
+    assert.equal(
+      authSource.includes("let _accessToken"),
+      false,
+      "auth.ts must not have module-global _accessToken",
+    );
     assert.equal(authSource.includes("let _tokenExpiresIn"), false);
-    const sessionSource = readFileSync(join(process.cwd(), "src/services/api/session.client.ts"), "utf8");
+    const sessionSource = readFileSync(
+      join(process.cwd(), "src/services/api/session.client.ts"),
+      "utf8",
+    );
     assert.match(sessionSource, /"use client"/);
     assert.match(sessionSource, /isBrowser|typeof window/);
     // Client session is the only store — verify login updates it
@@ -264,7 +301,10 @@ describe("auth — browser-direct login includes credentials: include", () => {
       },
     };
     const captures: Captured[] = [];
-    captureFetchSequence([{ status: 200, body: successBody(loginData) }], captures);
+    captureFetchSequence(
+      [{ status: 200, body: successBody(loginData) }],
+      captures,
+    );
     await login({ email: "a@b.com", password: "p" });
     assert.equal(getAccessToken(), "client-only-token");
     // Ensure client `request` uses the same session source for subsequent calls
@@ -272,10 +312,20 @@ describe("auth — browser-direct login includes credentials: include", () => {
     mock.restoreAll();
     mock.method(globalThis, "fetch", async (url: string, init: RequestInit) => {
       authHeader = (init.headers as Record<string, string>).Authorization;
-      return createMockResponse({ status: 200, body: successBody({ ok: true }) });
+      return createMockResponse({
+        status: 200,
+        body: successBody({ ok: true }),
+      });
     });
     // stub lang, but token comes from session.client, not stub
-    __setLanguageAndTokenForTest(async () => ({ lang: "en", token: undefined }) as unknown as Awaited<ReturnType<typeof import("./getLanguageAndToken.ts").getLanguageAndToken>>);
+    __setLanguageAndTokenForTest(
+      async () =>
+        ({ lang: "en", token: undefined }) as unknown as Awaited<
+          ReturnType<
+            typeof import("./getLanguageAndToken.ts").getLanguageAndToken
+          >
+        >,
+    );
     await request({ path: "/products" });
     assert.equal(authHeader, "Bearer client-only-token");
   });
@@ -304,7 +354,10 @@ describe("auth — /auth/me uses dashboard key + Bearer from client session", ()
     const me = await getMe();
     assert.equal(me.id, "u1");
     const headers = captures[0].init.headers as Record<string, string>;
-    assert.equal(headers["X-Access-Api"], "test-dashboard-key-32-chars-minimum-ok");
+    assert.equal(
+      headers["X-Access-Api"],
+      "test-dashboard-key-32-chars-minimum-ok",
+    );
     assert.equal(headers.Authorization, "Bearer bearer-xyz");
     assert.equal(headers["x-lang"], "en");
     assert.equal(captures[0].init.credentials, "include");
@@ -320,12 +373,18 @@ describe("auth — refresh uses credentials/cookie flow (no Authorization) and u
       expiresIn: 900,
     };
     const captures: Captured[] = [];
-    captureFetchSequence([{ status: 200, body: successBody(refreshData) }], captures);
+    captureFetchSequence(
+      [{ status: 200, body: successBody(refreshData) }],
+      captures,
+    );
     __setAccessTokenForTest("old-token");
     const result = await refresh();
     assert.equal(result.accessToken, "refreshed-token-xyz");
     const headers = captures[0].init.headers as Record<string, string>;
-    assert.equal(headers["X-Access-Api"], "test-dashboard-key-32-chars-minimum-ok");
+    assert.equal(
+      headers["X-Access-Api"],
+      "test-dashboard-key-32-chars-minimum-ok",
+    );
     assert.equal(headers["x-lang"], "en");
     assert.equal(captures[0].init.credentials, "include");
     assert.equal(headers.Authorization, undefined);
@@ -344,7 +403,11 @@ describe("auth — refresh uses credentials/cookie flow (no Authorization) and u
       await new Promise((r) => setTimeout(r, 20));
       return createMockResponse({
         status: 200,
-        body: successBody({ accessToken: newToken, tokenType: "Bearer", expiresIn: 900 }),
+        body: successBody({
+          accessToken: newToken,
+          tokenType: "Bearer",
+          expiresIn: 900,
+        }),
       });
     });
 
@@ -376,7 +439,11 @@ describe("client — expired-token GET refreshes once then retries once using re
         assert.equal(h.Authorization, undefined);
         return createMockResponse({
           status: 200,
-          body: successBody({ accessToken: "fresh-token-123", tokenType: "Bearer", expiresIn: 900 }),
+          body: successBody({
+            accessToken: "fresh-token-123",
+            tokenType: "Bearer",
+            expiresIn: 900,
+          }),
         });
       }
       if (call === 1) {
@@ -384,12 +451,19 @@ describe("client — expired-token GET refreshes once then retries once using re
         assert.equal(h.Authorization, "Bearer expired-token");
         return createMockResponse({
           status: 401,
-          body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+          body: failureBody({
+            statusCode: 401,
+            message: "Unauthorized",
+            code: "UnauthorizedException",
+          }),
         });
       }
       const h = init.headers as Record<string, string>;
       assert.equal(h.Authorization, "Bearer fresh-token-123");
-      return createMockResponse({ status: 200, body: successBody(successProducts) });
+      return createMockResponse({
+        status: 200,
+        body: successBody(successProducts),
+      });
     });
 
     const data = await request<typeof successProducts>({ path: "/products" });
@@ -416,18 +490,29 @@ describe("client — multiple simultaneous 401s issue only one refresh", () => {
         await new Promise((r) => setTimeout(r, 30));
         return createMockResponse({
           status: 200,
-          body: successBody({ accessToken: "new-token-concurrent", tokenType: "Bearer", expiresIn: 900 }),
+          body: successBody({
+            accessToken: "new-token-concurrent",
+            tokenType: "Bearer",
+            expiresIn: 900,
+          }),
         });
       }
       const h = init.headers as Record<string, string>;
       if (h.Authorization === "Bearer expired") {
         return createMockResponse({
           status: 401,
-          body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+          body: failureBody({
+            statusCode: 401,
+            message: "Unauthorized",
+            code: "UnauthorizedException",
+          }),
         });
       }
       assert.equal(h.Authorization, "Bearer new-token-concurrent");
-      return createMockResponse({ status: 200, body: successBody(productData) });
+      return createMockResponse({
+        status: 200,
+        body: successBody(productData),
+      });
     });
 
     const p1 = request({ path: "/products" });
@@ -453,12 +538,20 @@ describe("client — failed refresh clears session and does not loop", () => {
       if (href.includes("/auth/refresh")) {
         return createMockResponse({
           status: 401,
-          body: failureBody({ statusCode: 401, message: "Invalid refresh", code: "UnauthorizedException" }),
+          body: failureBody({
+            statusCode: 401,
+            message: "Invalid refresh",
+            code: "UnauthorizedException",
+          }),
         });
       }
       return createMockResponse({
         status: 401,
-        body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+        body: failureBody({
+          statusCode: 401,
+          message: "Unauthorized",
+          code: "UnauthorizedException",
+        }),
       });
     });
 
@@ -478,14 +571,20 @@ describe("client — failed refresh clears session and does not loop", () => {
       secondCalls += 1;
       return createMockResponse({
         status: 401,
-        body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+        body: failureBody({
+          statusCode: 401,
+          message: "Unauthorized",
+          code: "UnauthorizedException",
+        }),
       });
     });
     __setAccessTokenForTest(undefined);
     __setLanguageAndTokenForTest(
       async () =>
         ({ lang: "en", token: undefined }) as unknown as Awaited<
-          ReturnType<typeof import("./getLanguageAndToken.ts").getLanguageAndToken>
+          ReturnType<
+            typeof import("./getLanguageAndToken.ts").getLanguageAndToken
+          >
         >,
     );
     await assert.rejects(
@@ -501,31 +600,64 @@ describe("client — failed refresh clears session and does not loop", () => {
 
 describe("isRetryEligible — never retried paths", () => {
   it("login, logout, refresh are never retried", () => {
-    assert.equal(isRetryEligible({ path: "/auth/login", method: "GET" }), false);
-    assert.equal(isRetryEligible({ path: "/auth/refresh", method: "GET" }), false);
-    assert.equal(isRetryEligible({ path: "/auth/logout", method: "GET" }), false);
-    assert.equal(isRetryEligible({ path: "/auth/login", method: "POST", body: {} }), false);
+    assert.equal(
+      isRetryEligible({ path: "/auth/login", method: "GET" }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/auth/refresh", method: "GET" }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/auth/logout", method: "GET" }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/auth/login", method: "POST", body: {} }),
+      false,
+    );
   });
 
   it("file uploads (FormData/Blob) are never retried", () => {
     const fd = new FormData();
-    assert.equal(isRetryEligible({ path: "/products", method: "GET", body: fd }), false);
+    assert.equal(
+      isRetryEligible({ path: "/products", method: "GET", body: fd }),
+      false,
+    );
     const blob = new Blob(["x"]);
-    assert.equal(isRetryEligible({ path: "/media", method: "GET", body: blob }), false);
+    assert.equal(
+      isRetryEligible({ path: "/media", method: "GET", body: blob }),
+      false,
+    );
   });
 
   it("non-GET mutations are never retried", () => {
-    assert.equal(isRetryEligible({ path: "/products", method: "POST", body: {} }), false);
-    assert.equal(isRetryEligible({ path: "/products/1", method: "PUT", body: {} }), false);
-    assert.equal(isRetryEligible({ path: "/products/1", method: "PATCH", body: {} }), false);
-    assert.equal(isRetryEligible({ path: "/products/1", method: "DELETE" }), false);
+    assert.equal(
+      isRetryEligible({ path: "/products", method: "POST", body: {} }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/products/1", method: "PUT", body: {} }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/products/1", method: "PATCH", body: {} }),
+      false,
+    );
+    assert.equal(
+      isRetryEligible({ path: "/products/1", method: "DELETE" }),
+      false,
+    );
   });
 
   it("GET to normal resource is eligible", () => {
     assert.equal(isRetryEligible({ path: "/products", method: "GET" }), true);
     assert.equal(isRetryEligible({ path: "/orders", method: "GET" }), true);
     assert.equal(isRetryEligible({ path: "/auth/me", method: "GET" }), true);
-    assert.equal(isRetryEligible({ path: "/auth/sessions", method: "GET" }), true);
+    assert.equal(
+      isRetryEligible({ path: "/auth/sessions", method: "GET" }),
+      true,
+    );
   });
 
   it("client does not retry POST mutation 401 even with token", async () => {
@@ -537,12 +669,20 @@ describe("isRetryEligible — never retried paths", () => {
       if ((url as string).includes("/auth/refresh")) {
         return createMockResponse({
           status: 200,
-          body: successBody({ accessToken: "new", tokenType: "Bearer", expiresIn: 900 }),
+          body: successBody({
+            accessToken: "new",
+            tokenType: "Bearer",
+            expiresIn: 900,
+          }),
         });
       }
       return createMockResponse({
         status: 401,
-        body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+        body: failureBody({
+          statusCode: 401,
+          message: "Unauthorized",
+          code: "UnauthorizedException",
+        }),
       });
     });
     await assert.rejects(
@@ -565,12 +705,20 @@ describe("isRetryEligible — never retried paths", () => {
       if ((url as string).includes("/auth/refresh")) {
         return createMockResponse({
           status: 200,
-          body: successBody({ accessToken: "new2", tokenType: "Bearer", expiresIn: 900 }),
+          body: successBody({
+            accessToken: "new2",
+            tokenType: "Bearer",
+            expiresIn: 900,
+          }),
         });
       }
       return createMockResponse({
         status: 401,
-        body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+        body: failureBody({
+          statusCode: 401,
+          message: "Unauthorized",
+          code: "UnauthorizedException",
+        }),
       });
     });
     const fd = new FormData();
@@ -607,7 +755,10 @@ describe("auth — logout succeeds on 204 and clears client session exactly once
     assert.equal(hookCalls, 1);
     const headers = captures[0].init.headers as Record<string, string>;
     assert.equal(headers.Authorization, "Bearer valid-token");
-    assert.equal(headers["X-Access-Api"], "test-dashboard-key-32-chars-minimum-ok");
+    assert.equal(
+      headers["X-Access-Api"],
+      "test-dashboard-key-32-chars-minimum-ok",
+    );
     assert.equal(captures[0].init.credentials, "include");
     assert.equal(captures[0].init.method, "POST");
     assert.match(captures[0].url, /\/auth\/logout/);
@@ -621,7 +772,16 @@ describe("auth — logout succeeds on 204 and clears client session exactly once
     });
     const captures: Captured[] = [];
     captureFetchSequence(
-      [{ status: 401, body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }) }],
+      [
+        {
+          status: 401,
+          body: failureBody({
+            statusCode: 401,
+            message: "Unauthorized",
+            code: "UnauthorizedException",
+          }),
+        },
+      ],
       captures,
     );
     await logout();
@@ -639,16 +799,27 @@ describe("auth — logout succeeds on 204 and clears client session exactly once
       if ((url as string).includes("/auth/refresh")) {
         return createMockResponse({
           status: 401,
-          body: failureBody({ statusCode: 401, message: "Invalid", code: "UnauthorizedException" }),
+          body: failureBody({
+            statusCode: 401,
+            message: "Invalid",
+            code: "UnauthorizedException",
+          }),
         });
       }
       return createMockResponse({
         status: 401,
-        body: failureBody({ statusCode: 401, message: "Unauthorized", code: "UnauthorizedException" }),
+        body: failureBody({
+          statusCode: 401,
+          message: "Unauthorized",
+          code: "UnauthorizedException",
+        }),
       });
     });
     stubLangClient("en", "tok");
-    await assert.rejects(() => request({ path: "/products" }), () => true);
+    await assert.rejects(
+      () => request({ path: "/products" }),
+      () => true,
+    );
     assert.equal(getAccessToken(), undefined);
     assert.equal(hookCalls, 1);
   });
@@ -658,9 +829,13 @@ describe("auth — no secret logging", () => {
   it("does not log access tokens", async () => {
     const logs: unknown[] = [];
     const originalLog = console.log;
-    (console as unknown as Record<string, unknown>).log = (...args: unknown[]) => logs.push((args as string[]).join(" "));
+    (console as unknown as Record<string, unknown>).log = (
+      ...args: unknown[]
+    ) => logs.push((args as string[]).join(" "));
     const originalError = console.error;
-    (console as unknown as Record<string, unknown>).error = (...args: unknown[]) => logs.push((args as string[]).join(" "));
+    (console as unknown as Record<string, unknown>).error = (
+      ...args: unknown[]
+    ) => logs.push((args as string[]).join(" "));
     try {
       const loginData = {
         accessToken: "super-secret-access-12345",
@@ -682,7 +857,10 @@ describe("auth — no secret logging", () => {
         },
       };
       const captures: Captured[] = [];
-      captureFetchSequence([{ status: 200, body: successBody(loginData) }], captures);
+      captureFetchSequence(
+        [{ status: 200, body: successBody(loginData) }],
+        captures,
+      );
       await login({ email: "a@b.com", password: "p" });
       __setAccessTokenForTest("super-secret-access-12345");
       const user = {
@@ -701,7 +879,10 @@ describe("auth — no secret logging", () => {
       };
       mock.restoreAll();
       captures.length = 0;
-      captureFetchSequence([{ status: 200, body: successBody(user) }], captures);
+      captureFetchSequence(
+        [{ status: 200, body: successBody(user) }],
+        captures,
+      );
       await getMe();
       const logText = logs.join(" ");
       assert.equal(logText.includes("super-secret-access-12345"), false);
@@ -717,12 +898,29 @@ describe("auth — sessions", () => {
     __setAccessTokenForTest("tok");
     const sessionsPayload = {
       sessions: [
-        { id: "s1", deviceName: "Chrome", platform: "dashboard", createdAt: new Date().toISOString(), lastUsedAt: null, current: true },
-        { id: "s2", deviceName: "Mobile", platform: "mobile", createdAt: new Date().toISOString(), lastUsedAt: new Date().toISOString(), current: false },
+        {
+          id: "s1",
+          deviceName: "Chrome",
+          platform: "dashboard",
+          createdAt: new Date().toISOString(),
+          lastUsedAt: null,
+          current: true,
+        },
+        {
+          id: "s2",
+          deviceName: "Mobile",
+          platform: "mobile",
+          createdAt: new Date().toISOString(),
+          lastUsedAt: new Date().toISOString(),
+          current: false,
+        },
       ],
     };
     const captures: Captured[] = [];
-    captureFetchSequence([{ status: 200, body: successBody(sessionsPayload) }], captures);
+    captureFetchSequence(
+      [{ status: 200, body: successBody(sessionsPayload) }],
+      captures,
+    );
     const sessions = await listSessions();
     assert.equal(sessions.length, 2);
     assert.equal(sessions[0].id, "s1");
@@ -745,7 +943,10 @@ describe("auth — sessions", () => {
 
 describe("remediation — proxy and legacy checks", () => {
   it("proxy.ts does not call a permissions endpoint (no fetch, locale only)", () => {
-    const proxySource = readFileSync(join(process.cwd(), "src/proxy.ts"), "utf8");
+    const proxySource = readFileSync(
+      join(process.cwd(), "src/proxy.ts"),
+      "utf8",
+    );
     // No Nest fetch at all — middleware is locale-only until T21
     assert.equal(proxySource.includes("fetch("), false);
     assert.equal(proxySource.includes("await fetch"), false);
@@ -757,11 +958,20 @@ describe("remediation — proxy and legacy checks", () => {
   });
 
   it("no legacy default apiClient or queries.ts imports remain", () => {
-    const indexSource = readFileSync(join(process.cwd(), "src/services/api/index.ts"), "utf8");
+    const indexSource = readFileSync(
+      join(process.cwd(), "src/services/api/index.ts"),
+      "utf8",
+    );
     assert.equal(indexSource.includes("LegacyDefault"), false);
-    assert.equal(indexSource.includes('export default'), false);
-    assert.equal(existsSync(join(process.cwd(), "src/services/api/queries.ts")), false);
-    assert.equal(existsSync(join(process.cwd(), "src/types/pagination.ts")), false);
+    assert.equal(indexSource.includes("export default"), false);
+    assert.equal(
+      existsSync(join(process.cwd(), "src/services/api/queries.ts")),
+      false,
+    );
+    assert.equal(
+      existsSync(join(process.cwd(), "src/types/pagination.ts")),
+      false,
+    );
   });
 
   it("no forbidden fetch outside approved transport boundary", () => {
@@ -772,16 +982,28 @@ describe("remediation — proxy and legacy checks", () => {
     ];
     // This test asserts the file count: if a file outside allowed contains fetch(, it fails.
     // We check via reading proxy/auth which we already verified have no fetch.
-    const proxyHasFetch = readFileSync(join(process.cwd(), "src/proxy.ts"), "utf8").includes("fetch(");
+    const proxyHasFetch = readFileSync(
+      join(process.cwd(), "src/proxy.ts"),
+      "utf8",
+    ).includes("fetch(");
     assert.equal(proxyHasFetch, false);
-    const authStubHasFetch = readFileSync(join(process.cwd(), "src/auth.ts"), "utf8").includes("await fetch");
+    const authStubHasFetch = readFileSync(
+      join(process.cwd(), "src/auth.ts"),
+      "utf8",
+    ).includes("await fetch");
     assert.equal(authStubHasFetch, false);
   });
 
   it("session.client.ts is client-only and not importable by server/Edge", () => {
-    const sessionSource = readFileSync(join(process.cwd(), "src/services/api/session.client.ts"), "utf8");
+    const sessionSource = readFileSync(
+      join(process.cwd(), "src/services/api/session.client.ts"),
+      "utf8",
+    );
     assert.match(sessionSource, /"use client"/);
-    const proxySource = readFileSync(join(process.cwd(), "src/proxy.ts"), "utf8");
+    const proxySource = readFileSync(
+      join(process.cwd(), "src/proxy.ts"),
+      "utf8",
+    );
     assert.equal(proxySource.includes("session.client"), false);
     assert.equal(proxySource.includes("getAccessToken"), false);
   });

@@ -46,22 +46,26 @@ import { cn } from "@/lib/utils";
 // be used, otherwise this local implementation handles the `asChild` clone.
 const Slot: React.ForwardRefExoticComponent<
   React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
-> = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }>(
-  ({ children, ...props }, ref) => {
-    if (React.isValidElement(children)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return React.cloneElement(children as React.ReactElement<any>, {
+> = React.forwardRef<
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+>(({ children, ...props }, ref) => {
+  if (React.isValidElement(children)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return React.cloneElement(
+      children as React.ReactElement<any>,
+      {
         ...(props as object),
         ref,
-      } as object);
-    }
-    return (
-      <div {...props} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
-      </div>
+      } as object,
     );
-  },
-);
+  }
+  return (
+    <div {...props} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});
 Slot.displayName = "Slot";
 
 const orientationConfig = {

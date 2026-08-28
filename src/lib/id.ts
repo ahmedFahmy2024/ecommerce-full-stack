@@ -5,7 +5,8 @@ interface GenerateIdOptions {
   separator?: string;
 }
 
-const ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const ALPHABET =
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 function generateRandomString(length: number): string {
   const bytes = new Uint8Array(length);

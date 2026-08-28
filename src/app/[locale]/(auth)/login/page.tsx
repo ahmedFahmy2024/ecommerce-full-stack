@@ -28,7 +28,9 @@ export default function LoginPage() {
     <div className="flex h-screen w-full items-center justify-center bg-zinc-50 dark:bg-zinc-950">
       <Card className="z-10 w-full max-w-md border-zinc-200 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/80">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold tracking-tight">Sign in</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            Sign in
+          </CardTitle>
           <CardDescription className="text-zinc-500 dark:text-zinc-400">
             Enter your credentials to access the dashboard
           </CardDescription>
