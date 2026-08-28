@@ -5,6 +5,13 @@
  * normalized errors. No UI, auth refresh, redirects, or endpoint registry.
  */
 
+// Auth refresh coordinator (T15) — single-flight, retry once for eligible GET 401s.
+// Auth module does not import client.ts, so no circular dependency.
+import {
+  getStoredAccessToken,
+  isRetryEligible,
+  refreshAccessToken,
+} from "./auth.ts";
 import { buildApiUrl, getDashboardApiKey } from "./config.ts";
 import type { ApiRequestOptions, HttpMethod } from "./contracts.ts";
 import { ApiClientError } from "./contracts.ts";
@@ -52,7 +59,7 @@ function resolvePath(
 }
 
 export async function request<TResponse = unknown, TBody = unknown>(
-  options: ApiRequestOptions<TResponse, TBody>,
+  options: ApiRequestOptions<TResponse, TBody> & { _retried?: boolean },
 ): Promise<TResponse | undefined> {
   const rawMethod = options.method ?? "GET";
   const method = rawMethod.toUpperCase() as HttpMethod;
@@ -63,8 +70,12 @@ export async function request<TResponse = unknown, TBody = unknown>(
     );
   }
 
-  const { lang: rawLang, token } = await _getLanguageAndToken();
+  const { lang: rawLang, token: langToken } = await _getLanguageAndToken();
   const lang = normalizeLang(rawLang);
+  // Single session owner: prefer in-memory stored token (updated by login/refresh),
+  // fallback to NextAuth-provided token for server rendering / initial load.
+  const storedToken = getStoredAccessToken();
+  const token = storedToken ?? langToken;
 
   const resolvedPath = resolvePath(options.path, options.params);
   const url = buildApiUrl(resolvedPath, options.query);
@@ -142,7 +153,35 @@ export async function request<TResponse = unknown, TBody = unknown>(
 
     if (result.kind === "success") return result.data;
     if (result.kind === "empty") return undefined as TResponse | undefined;
-    throw result.error;
+
+    const apiError = result.error;
+    // Single-flight refresh: one eligible authenticated 401 retries once after refresh.
+    // Never retried: login/logout/refresh, file uploads, non-GET mutations.
+    if (
+      apiError.status === 401 &&
+      !options._retried &&
+      token &&
+      isRetryEligible({ path: resolvedPath, method, body: options.body })
+    ) {
+      try {
+        await refreshAccessToken();
+      } catch (refreshError) {
+        // Refresh failed — local session cleared inside refreshAccessToken.
+        // Surface typed unauthenticated error for auth boundary.
+        if (refreshError instanceof ApiClientError) throw refreshError;
+        throw apiError;
+      }
+      // Retry exactly once with new token (resolve will pick up stored token)
+      const retryOptions = { ...options, _retried: true } as ApiRequestOptions<
+        TResponse,
+        TBody
+      > & {
+        _retried: boolean;
+      };
+      return request<TResponse, TBody>(retryOptions);
+    }
+
+    throw apiError;
   } catch (error) {
     if (error instanceof ApiClientError) throw error;
     throw normalizeTransportError(error, method, resolvedPath);
