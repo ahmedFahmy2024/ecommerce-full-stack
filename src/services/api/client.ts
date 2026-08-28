@@ -1,34 +1,67 @@
 /**
- * Generic transport client for the Nest e-commerce backend.
+ * Generic transport client for the Nest e-commerce backend (remediated T14/T15).
  *
  * Transport-only: headers, URL building, body handling, response parsing, and
- * normalized errors. No UI, auth refresh, redirects, or endpoint registry.
+ * normalized errors. Single-flight 401 refresh for eligible GETs is handled
+ * here, delegating to `auth.ts`'s coordinator which updates the same
+ * client-safe session (`session.client.ts`).
+ *
+ * No UI, no NextAuth, no server token store.
  */
 
-// Auth refresh coordinator (T15) — single-flight, retry once for eligible GET 401s.
-// Auth module does not import client.ts, so no circular dependency.
-import {
-  getStoredAccessToken,
-  isRetryEligible,
-  refreshAccessToken,
-} from "./auth.ts";
+import { isRetryEligible, refreshAccessToken } from "./auth.ts";
 import { buildApiUrl, getDashboardApiKey } from "./config.ts";
 import type { ApiRequestOptions, HttpMethod } from "./contracts.ts";
 import { ApiClientError } from "./contracts.ts";
 import { normalizeTransportError, parseApiResponse } from "./errors.ts";
-import * as langMod from "./getLanguageAndToken.ts";
+import { getAccessToken } from "./session.client.ts";
 
-// Test hook — allows client.test.ts to stub language/token without ESM mocking.
-// Production code never calls this.
-let _getLanguageAndToken: typeof langMod.getLanguageAndToken =
-  langMod.getLanguageAndToken;
-export function __setLanguageAndTokenForTest(
-  fn: typeof langMod.getLanguageAndToken,
-): void {
-  _getLanguageAndToken = fn;
+// Lang resolver — client-safe (reads `inox` cookie, falls back to `en`)
+// Keep test hook so `client.test.ts` can deterministically stub `en`/`ar`
+let _langForTest: "en" | "ar" | null = null;
+
+export function __setLangForTest(lang: "en" | "ar"): void {
+  _langForTest = lang;
 }
+
+export function __resetLangForTest(): void {
+  _langForTest = null;
+}
+
+function resolveLang(): "en" | "ar" {
+  if (_langForTest) return _langForTest;
+  try {
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/(?:^|; )inox=([^;]*)/);
+      if (match) {
+        const decoded = decodeURIComponent(match[1]);
+        return decoded === "ar" ? "ar" : "en";
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return "en";
+}
+
+// Test hook for legacy `getLanguageAndToken` stubbing — kept for backwards
+// compatibility with existing tests that call `__setLanguageAndTokenForTest`.
+// We keep the indirection so tests can stub without touching session directly.
+let _langTokenStub: (() => Promise<{ lang: string; token?: string }>) | null =
+  null;
+
+export function __setLanguageAndTokenForTest(
+  fn: () => Promise<{ lang: string; token?: string }>,
+): void {
+  _langTokenStub = fn as unknown as () => Promise<{
+    lang: string;
+    token?: string;
+  }>;
+}
+
 export function __resetLanguageAndTokenForTest(): void {
-  _getLanguageAndToken = langMod.getLanguageAndToken;
+  _langTokenStub = null;
+  _langForTest = null;
 }
 
 const ALLOWED_METHODS: ReadonlySet<string> = new Set([
@@ -51,7 +84,6 @@ function resolvePath(
   let resolved = path;
   for (const [key, value] of Object.entries(params)) {
     const encoded = encodeURIComponent(String(value));
-    // Support {key} placeholder (legacy + spec) and :key style
     resolved = resolved.split(`{${key}}`).join(encoded);
     resolved = resolved.split(`:${key}`).join(encoded);
   }
@@ -70,25 +102,29 @@ export async function request<TResponse = unknown, TBody = unknown>(
     );
   }
 
-  const { lang: rawLang, token: langToken } = await _getLanguageAndToken();
-  const lang = normalizeLang(rawLang);
-  // Single session owner: prefer in-memory stored token (updated by login/refresh),
-  // fallback to NextAuth-provided token for server rendering / initial load.
-  const storedToken = getStoredAccessToken();
-  const token = storedToken ?? langToken;
+  // Resolve lang/token — token from client session only (never NextAuth / server)
+  let lang: "en" | "ar";
+  let token: string | undefined;
+
+  if (_langTokenStub) {
+    const stub = await _langTokenStub();
+    lang = normalizeLang(stub.lang);
+    // Prefer client session token, fallback to stub token for old tests
+    token = getAccessToken() ?? stub.token;
+  } else {
+    lang = _langForTest ? _langForTest : resolveLang();
+    token = getAccessToken();
+  }
 
   const resolvedPath = resolvePath(options.path, options.params);
   const url = buildApiUrl(resolvedPath, options.query);
 
-  // Default headers — transport only
   const headers: Record<string, string> = {
     Accept: "application/json",
     "X-Access-Api": getDashboardApiKey(),
     "x-lang": lang,
   };
 
-  // Merge caller-provided headers after defaults so callers can add custom headers
-  // without overwriting the required transport headers unless they explicitly do.
   if (options.headers) {
     for (const [k, v] of Object.entries(options.headers)) {
       headers[k] = v;
@@ -108,33 +144,26 @@ export async function request<TResponse = unknown, TBody = unknown>(
 
     if (body instanceof FormData) {
       bodyInit = body as BodyInit;
-      // Let the browser set multipart boundary — never send a manual Content-Type
       delete headers["Content-Type"];
       delete headers["content-type"];
     } else if (typeof Blob !== "undefined" && body instanceof Blob) {
       bodyInit = body as BodyInit;
-      // Preserve blob's own type behavior; do not force application/json
       if (headers["Content-Type"] === "application/json") {
         delete headers["Content-Type"];
       }
       if (headers["content-type"] === "application/json") {
         delete headers["content-type"];
       }
-      // Leave Content-Type absent so fetch uses blob.type automatically;
-      // if caller supplied a custom Content-Type via options.headers, keep it.
     } else if (typeof body === "string") {
-      // Raw string body — send as-is with json content type if not already set
       if (!headers["Content-Type"] && !headers["content-type"]) {
         headers["Content-Type"] = "application/json";
       }
       bodyInit = body as BodyInit;
     } else {
-      // JSON object — stringify once
       headers["Content-Type"] = "application/json";
       bodyInit = JSON.stringify(body);
     }
   }
-  // GET/HEAD-like: bodyInit stays undefined by construction — no body sent
 
   const fetchInit: RequestInit = {
     method,
@@ -155,8 +184,6 @@ export async function request<TResponse = unknown, TBody = unknown>(
     if (result.kind === "empty") return undefined as TResponse | undefined;
 
     const apiError = result.error;
-    // Single-flight refresh: one eligible authenticated 401 retries once after refresh.
-    // Never retried: login/logout/refresh, file uploads, non-GET mutations.
     if (
       apiError.status === 401 &&
       !options._retried &&
@@ -166,12 +193,9 @@ export async function request<TResponse = unknown, TBody = unknown>(
       try {
         await refreshAccessToken();
       } catch (refreshError) {
-        // Refresh failed — local session cleared inside refreshAccessToken.
-        // Surface typed unauthenticated error for auth boundary.
         if (refreshError instanceof ApiClientError) throw refreshError;
         throw apiError;
       }
-      // Retry exactly once with new token (resolve will pick up stored token)
       const retryOptions = { ...options, _retried: true } as ApiRequestOptions<
         TResponse,
         TBody

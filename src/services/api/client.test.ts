@@ -16,6 +16,7 @@ import {
   request,
 } from "./client.ts";
 import { ApiClientError } from "./contracts.ts";
+import { __resetSessionForTest } from "./session.client.ts";
 
 // ---------------------------------------------------------------------------
 // Env setup — validated config requires these
@@ -32,6 +33,8 @@ beforeEach(() => {
   originalKey = process.env[KEY_ENV];
   process.env[BACKEND_ENV] = "http://localhost:3001/v1";
   process.env[KEY_ENV] = "test-dashboard-key-32-chars-minimum-ok";
+  (process.env as Record<string, string | undefined>).NODE_ENV = "test";
+  __resetSessionForTest();
 });
 
 afterEach(() => {
@@ -42,6 +45,7 @@ afterEach(() => {
   else env[KEY_ENV] = originalKey;
   mock.restoreAll();
   __resetLanguageAndTokenForTest();
+  __resetSessionForTest();
 });
 
 // ---------------------------------------------------------------------------

@@ -1,8 +1,10 @@
-import { menusConfig } from "./menus";
-
 /**
- * Global site configuration.
- * Dictates site branding, metadata, and default layout behavior.
+ * Global site configuration (remediation T16).
+ *
+ * Previous file re-exported `menusConfig` (education-domain navigation).
+ * That registry was deleted in T16 remediation — old menu labels, cloned
+ * routes, and permission strings are not valid for Nest e-commerce.
+ * Navigation T22 will reintroduce Overview/Catalog/Sales/Customers/Marketing/Account.
  */
 export const siteConfig = {
   name: "Enterprise Dashboard",
@@ -14,21 +16,16 @@ export const siteConfig = {
     github: "https://github.com/example/dashboard",
   },
 
-  /**
-   * Layout configuration determines the overall structure of the application.
-   */
   layout: {
-    type: "vertical", // "vertical" | "horizontal"
-    sidebarType: "classic", // "classic" | "module"
-    defaultTheme: "system", // "light" | "dark" | "system"
+    type: "vertical" as const,
+    sidebarType: "classic" as const,
+    defaultTheme: "system" as const,
   },
 
-  /**
-   * Navigation configuration picks which menu set from menusConfig to use.
-   */
+  // Navigation placeholder — T22 will populate with real e-commerce menus
   nav: {
-    main: menusConfig.mainNav,
-    sidebar: menusConfig.sidebarNav,
+    main: [] as const,
+    sidebar: [] as const,
   },
 } as const;
 

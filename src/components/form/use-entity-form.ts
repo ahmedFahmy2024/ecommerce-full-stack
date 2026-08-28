@@ -12,60 +12,33 @@ import {
 } from "react-hook-form";
 import type { ZodType } from "zod";
 
-import { useEntityFormSubmit } from "./use-entity-form-submit";
-
-interface UseEntityFormOptions<TValues extends FieldValues, TEntity, TBody> {
-  entity?: TEntity;
-  // Zod 4 schemas use distinct Input/Output types; we constrain both ends to
-  // TValues so the form values, parsed output, and field paths all line up.
+interface UseEntityFormOptions<TValues extends FieldValues> {
   schema: ZodType<TValues, TValues>;
-  defaultValues: (entity: TEntity | undefined) => DefaultValues<TValues>;
-  createEndpoint: string;
-  updateEndpoint: string;
-  getId: (entity: TEntity) => string;
-  transform?: (values: TValues) => TBody;
-  onSuccess?: () => void;
-  formOptions?: Omit<
-    UseFormProps<TValues>,
-    "resolver" | "defaultValues"
-  >;
+  defaultValues: DefaultValues<TValues>;
+  formOptions?: Omit<UseFormProps<TValues>, "resolver" | "defaultValues">;
 }
 
-interface UseEntityFormResult<TValues extends FieldValues, TEntity> {
+interface UseEntityFormResult<TValues extends FieldValues> {
   form: UseFormReturn<TValues>;
-  onSubmit: (values: TValues) => Promise<void>;
-  isEdit: boolean;
   isSubmitting: boolean;
-  entity: TEntity | undefined;
 }
 
 /**
- * Wires react-hook-form, zod validation, and the create/update submit pipeline
- * into a single hook so feature forms don't re-assemble these pieces.
+ * Generic form helper (UI primitive, no API).
+ *
+ * Previous version wired `createEndpoint`/`updateEndpoint` via `apiClient`
+ * string registry. That registry was deleted in T16 remediation — old
+ * education endpoints do not exist on Nest. Feature code now calls
+ * `request` from `services/api` directly with typed `path` + `ApiRequestOptions`.
  */
-export function useEntityForm<
-  TValues extends FieldValues,
-  TEntity,
-  TBody = TValues,
->({
-  entity,
+export function useEntityForm<TValues extends FieldValues>({
   schema,
   defaultValues,
-  createEndpoint,
-  updateEndpoint,
-  getId,
-  transform,
-  onSuccess,
   formOptions,
-}: UseEntityFormOptions<TValues, TEntity, TBody>): UseEntityFormResult<
-  TValues,
-  TEntity
-> {
-  // Compute defaults once for the lifetime of this entity reference. RHF reads
-  // defaultValues only on mount; recomputing each render is wasted work.
+}: UseEntityFormOptions<TValues>): UseEntityFormResult<TValues> {
   const initialDefaultsRef = React.useRef<DefaultValues<TValues> | null>(null);
   if (initialDefaultsRef.current === null) {
-    initialDefaultsRef.current = defaultValues(entity);
+    initialDefaultsRef.current = defaultValues;
   }
 
   const form = useForm<TValues>({
@@ -74,20 +47,8 @@ export function useEntityForm<
     defaultValues: initialDefaultsRef.current,
   });
 
-  const onSubmit = useEntityFormSubmit<TValues, TEntity, TBody>({
-    entity,
-    createEndpoint,
-    updateEndpoint,
-    getId,
-    transform,
-    onSuccess,
-  });
-
   return {
     form,
-    onSubmit,
-    isEdit: !!entity,
     isSubmitting: form.formState.isSubmitting,
-    entity,
   };
 }

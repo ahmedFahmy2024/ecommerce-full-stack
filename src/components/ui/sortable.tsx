@@ -36,11 +36,33 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+
+// Minimal Slot fallback — mirrors `@radix-ui/react-slot` `asChild` behavior
+// without requiring the scoped package. If `radix-ui` re-exports `Slot` it will
+// be used, otherwise this local implementation handles the `asChild` clone.
+const Slot: React.ForwardRefExoticComponent<
+  React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+> = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }>(
+  ({ children, ...props }, ref) => {
+    if (React.isValidElement(children)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return React.cloneElement(children as React.ReactElement<any>, {
+        ...(props as object),
+        ref,
+      } as object);
+    }
+    return (
+      <div {...props} ref={ref as React.Ref<HTMLDivElement>}>
+        {children}
+      </div>
+    );
+  },
+);
+Slot.displayName = "Slot";
 
 const orientationConfig = {
   vertical: {

@@ -15,15 +15,13 @@ import {
  *
  * Previously this layout fetched `auth()` + `getMyPermissions()` and seeded
  * `MY_PERMISSIONS_QUERY_KEY` for permission-gated navigation. That permission
- * gate called the non-existent users permissions endpoint and caused false
- * denials. Until T21 defines a real permission-aware model, the shell performs
- * only layout — no auth, no permission fetch.
+ * gate called `GET /users/:id/permissions` which does not exist on Nest and
+ * caused false denials. Until T21 defines a real permission-aware model,
+ * the shell performs only layout — no auth, no permission fetch.
  *
  * T21 will add a client auth boundary that loads `GET /auth/me` via
  * `services/api/auth.ts` and redirects unauthenticated users to `/login`.
  */
-export const dynamic = "force-dynamic";
-
 export default function DashboardLayout({
   children,
 }: {

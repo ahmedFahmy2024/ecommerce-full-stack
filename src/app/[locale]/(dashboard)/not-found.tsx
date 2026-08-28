@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { routes } from "@/constants/routes";
 
 export default function DashboardNotFound() {
   return (
@@ -10,7 +9,7 @@ export default function DashboardNotFound() {
         The page you are looking for does not exist.
       </p>
       <Button asChild>
-        <Link href={routes.dashboard.index}>Go to Dashboard</Link>
+        <Link href="/">Go to Dashboard</Link>
       </Button>
     </div>
   );

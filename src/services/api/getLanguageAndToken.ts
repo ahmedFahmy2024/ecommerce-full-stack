@@ -1,58 +1,28 @@
-import { getCookie } from "cookies-next/client";
-import type { Session } from "next-auth";
-import { LOCALE_COOKIE } from "../../constants/index.ts";
-import { isServer } from "./environment.ts";
-
-type ClientUser = { accessToken?: string } & Session["user"];
-
-type SupportedLang = "en" | "ar";
-
-function normalizeLang(value: unknown): SupportedLang {
-  return value === "ar" ? "ar" : "en";
-}
-
 /**
- * Resolves the active locale and access token in a server-safe / client-safe way.
+ * REMOVED — NextAuth-based locale+token resolver (remediation T15).
  *
- * - Server: `next-intl/server` `getLocale()` + `next-auth` `auth()`.
- * - Client: `cookies-next` locale cookie + `next-auth/react` `getSession()`.
+ * Previous implementation read the access token from `next-auth` server/client
+ * session (`auth()` / `getSession()`) and mirrored it via a Node module-global
+ * (`_accessToken`) that leaked between requests. It also returned `lang` via
+ * `next-intl/server` on the server.
  *
- * Always returns `x-lang` compatible `en` | `ar` (fallback `en`) and an optional
- * bearer token. Callers must send `x-lang` (not `lang`) and add
- * `Authorization: Bearer <token>` only when `token` is present.
+ * Remediation: token lives only in `session.client.ts` (browser memory, client-only).
+ * Locale is resolved via `transport.ts` `resolveLangSync()` which reads the `inox`
+ * cookie (`next-intl` locale). Do not import `next-auth` for Nest API auth.
+ *
+ * This stub is kept so that old type-only imports (`typeof import("./getLanguageAndToken")`)
+ * continue to type-check while deleted pages are being removed. It throws at
+ * runtime if called — the call site must be migrated to `session.client.ts` +
+ * `transport.ts`.
  */
+
+// Keep the same exported name so `rg` finds no missing-module errors during
+// incremental deletion; new code must not import this.
 export const getLanguageAndToken = async (): Promise<{
-  lang: SupportedLang;
+  lang: "en" | "ar";
   token?: string;
 }> => {
-  if (isServer()) {
-    const { getLocale } = await import("next-intl/server");
-    const { auth } = await import("@/auth");
-
-    const session = await auth();
-    const locale = await getLocale();
-    const rawToken = (session?.user as ClientUser | undefined)?.accessToken;
-
-    return {
-      lang: normalizeLang(locale),
-      token:
-        typeof rawToken === "string" && rawToken.trim().length > 0
-          ? rawToken
-          : undefined,
-    };
-  }
-
-  const { getSession } = await import("next-auth/react");
-  const session = await getSession();
-  const user = session?.user as ClientUser | undefined;
-  const rawToken = user?.accessToken;
-  const rawLang = getCookie(LOCALE_COOKIE) as string | undefined;
-
-  return {
-    lang: normalizeLang(rawLang),
-    token:
-      typeof rawToken === "string" && rawToken.trim().length > 0
-        ? rawToken
-        : undefined,
-  };
+  throw new Error(
+    "[getLanguageAndToken] removed in T15 remediation. Token is now in services/api/session.client.ts (client-only); locale via services/api/transport.ts resolveLangSync(). See TASK.md T15.",
+  );
 };
