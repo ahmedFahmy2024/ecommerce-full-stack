@@ -1,14 +1,7 @@
 import { AuthBoundary } from "@/components/auth/AuthBoundary";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { NavBreadcrumb } from "@/components/layout/nav-breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,7 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 
 /**
- * Protected dashboard shell (T21).
+ * Protected dashboard shell (T21/T22).
  *
  * This layout stays **Server** (no `"use client"`). Auth is enforced by the
  * client leaf `AuthBoundary` which loads `GET /auth/me` via `authKeys.me()`
@@ -28,6 +21,11 @@ import {
  * - session-expired/unauthenticated: 401 → `clearSessionAndNotify` + redirect
  *   with `UnauthenticatedResult` (AuthBoundary)
  * - not-found: `not-found.tsx` via `Link from "@/i18n/navigation"`
+ *
+ * T22: the header breadcrumb is a client leaf (`NavBreadcrumb`) that derives
+ * its labels from the e-commerce navigation config and links through
+ * `Link from "@/i18n/navigation"`; the sidebar renders the same config with
+ * permission-aware hiding.
  */
 export const dynamic = "force-dynamic";
 
@@ -44,17 +42,7 @@ export default function DashboardLayout({
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ms-1" />
             <Separator orientation="vertical" className="me-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Current</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <NavBreadcrumb />
           </header>
           <main className="flex-1 p-4 md:p-6">{children}</main>
         </SidebarInset>

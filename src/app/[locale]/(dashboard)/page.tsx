@@ -30,8 +30,11 @@ export default function DashboardHomePage() {
       <div className="rounded-lg border p-4 text-sm">
         <p className="font-medium">Navigation</p>
         <p className="text-muted-foreground">
-          Rebuilt in T22 — entries will be permission-aware (Overview / Catalog
-          / Sales / Customers / Marketing / Account).
+          Overview / Catalog / Sales / Customers / Marketing / Account —
+          rendered by the sidebar from the e-commerce nav config with
+          permission-aware hiding (backend <code>@Auth()</code> stays
+          authoritative). Catalog, Sales, Customers, Marketing, and Account
+          routes are placeholders until their vertical slices (T30+) land.
         </p>
       </div>
     </div>

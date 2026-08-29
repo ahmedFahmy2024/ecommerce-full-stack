@@ -1,5 +1,4 @@
 import type { ColumnDef, Table } from "@tanstack/react-table";
-import type { TableName } from "@/constants";
 
 export interface DataTableFilterField<TData> {
   label: string;
@@ -18,7 +17,8 @@ export interface DataTableAction<TData> {
 }
 
 export interface DataTablePageProps<TData, TValue> {
-  tableFor: TableName;
+  /** Free-form entity/route label — the old education registry is gone (T22). */
+  tableFor: string;
   actions?: DataTableAction<TData>[];
   filterFields?: DataTableFilterField<TData>[];
   enableRowReordering?: boolean;

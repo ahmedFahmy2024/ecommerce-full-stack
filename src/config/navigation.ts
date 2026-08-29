@@ -6,12 +6,12 @@
  * / Sales (orders/payments/shipments/shipping-methods) / Customers (users)
  * / Marketing (coupons/reviews) / Account (profile/sessions).
  *
- * - No old education labels (batches, stages, classes, materials, geography,
- *   learning-resources, quizzes, forms, banners, students, instructors, supervisors).
  * - Each item declares an optional `permission` (value from nest PERMISSIONS).
  *   The sidebar hides items when the current user lacks it (UX only — backend
  *   @Auth remains authoritative). Items with no permission are visible to any
  *   authenticated user.
+ * - Labels and hrefs come exclusively from the e-commerce domain below; no
+ *   label or route from the previous education-domain template survives here.
  * - Routes are typed as hrefs for `Link from @/i18n/navigation` (localePrefix: as-needed).
  * - No NEXT_PUBLIC reads, no fetch, no UI imports here.
  */
@@ -56,9 +56,7 @@ export const navGroups: readonly NavGroup[] = [
   {
     id: "overview",
     label: "Overview",
-    items: [
-      { label: "Dashboard", href: "/", icon: "overview" },
-    ],
+    items: [{ label: "Dashboard", href: "/", icon: "overview" }],
   },
   {
     id: "catalog",
@@ -210,4 +208,26 @@ export function findNavGroupLabel(pathname: string): string | undefined {
   }
   if (pathname === "/") return "Overview";
   return best?.groupLabel;
+}
+
+/**
+ * Find the nav item matching a pathname (exact match first, then the longest
+ * prefix). Consumed by the shell breadcrumb (`NavBreadcrumb`) so header
+ * labels derive from this config instead of a second hardcoded list.
+ */
+export function findNavItem(pathname: string): NavItem | undefined {
+  let best: NavItem | undefined;
+  for (const g of navGroups) {
+    for (const item of g.items) {
+      if (pathname === item.href) return item;
+      if (
+        item.href !== "/" &&
+        pathname.startsWith(`${item.href}/`) &&
+        (!best || item.href.length > best.href.length)
+      ) {
+        best = item;
+      }
+    }
+  }
+  return best;
 }

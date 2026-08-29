@@ -1,10 +1,11 @@
 /**
  * Global site configuration (remediation T16).
  *
- * Previous file re-exported `menusConfig` (education-domain navigation).
- * That registry was deleted in T16 remediation — old menu labels, cloned
- * routes, and permission strings are not valid for Nest e-commerce.
- * Navigation T22 will reintroduce Overview/Catalog/Sales/Customers/Marketing/Account.
+ * The previous file re-exported the old education-domain menu registry, which
+ * was deleted in the T16 remediation — those labels, routes, and permission
+ * strings are not valid for the Nest e-commerce backend. The e-commerce
+ * navigation (Overview / Catalog / Sales / Customers / Marketing / Account)
+ * lives in `src/config/navigation.ts` (T22).
  */
 export const siteConfig = {
   name: "Enterprise Dashboard",
@@ -20,12 +21,6 @@ export const siteConfig = {
     type: "vertical" as const,
     sidebarType: "classic" as const,
     defaultTheme: "system" as const,
-  },
-
-  // Navigation placeholder — T22 will populate with real e-commerce menus
-  nav: {
-    main: [] as const,
-    sidebar: [] as const,
   },
 } as const;
 

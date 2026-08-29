@@ -5,11 +5,7 @@ import type Common from "../messages/en/Common.json";
 import type IndexPage from "../messages/en/IndexPage.json";
 import type Auth from "../messages/en/Auth.json";
 import type Users from "../messages/en/Users.json";
-import type Classes from "../messages/en/Classes.json";
-import type Materials from "../messages/en/Materials.json";
 import type Categories from "../messages/en/Categories.json";
-import type Stages from "../messages/en/Stages.json";
-import type Batches from "../messages/en/Batches.json";
 import type Roles from "../messages/en/Roles.json";
 
 declare module "next-intl" {
@@ -20,11 +16,7 @@ declare module "next-intl" {
       IndexPage: typeof IndexPage;
       Auth: typeof Auth;
       Users: typeof Users;
-      Classes: typeof Classes;
-      Materials: typeof Materials;
       Categories: typeof Categories;
-      Stages: typeof Stages;
-      Batches: typeof Batches;
       Roles: typeof Roles;
     };
     Formats: typeof formats;
