@@ -1,34 +1,84 @@
 "use client";
 
-import { Command } from "lucide-react";
+import {
+  Command,
+  CreditCard,
+  Image as ImageIcon,
+  Layers,
+  LayoutDashboard,
+  Monitor,
+  Package,
+  Settings2,
+  ShoppingCart,
+  Star,
+  Tags,
+  Ticket,
+  Truck,
+  User,
+  Users,
+  Warehouse,
+} from "lucide-react";
 import { useLocale } from "next-intl";
 import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { navGroups, type NavIconKey } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
-import { Link } from "@/i18n/navigation";
+import { usePermissions } from "@/hooks/use-permissions";
+import { Link, usePathname } from "@/i18n/navigation";
 import { getDirection } from "@/lib/direction";
 
+const iconMap: Record<NavIconKey, React.ComponentType<{ className?: string }>> = {
+  overview: LayoutDashboard,
+  categories: Tags,
+  products: Package,
+  variants: Layers,
+  inventory: Warehouse,
+  media: ImageIcon,
+  orders: ShoppingCart,
+  payments: CreditCard,
+  shipments: Truck,
+  "shipping-methods": Settings2,
+  users: Users,
+  coupons: Ticket,
+  reviews: Star,
+  profile: User,
+  sessions: Monitor,
+};
+
+function isActivePath(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 /**
- * Minimal sidebar (remediation T16).
+ * E-commerce sidebar (T22).
  *
- * Previous implementation rendered `menusConfig.sidebarNav` filtered by
- * `getMyPermissions()` (which called the non-existent `GET /users/:id/permissions`).
- * Navigation T22 will reintroduce permission-aware menus once a real permission
- * source (`GET /auth/me` or a new endpoint) exists.
- *
- * Until then the sidebar shows only generic placeholders and does not depend on
- * any auth state. No `filterSidebarGroups`, no `menusConfig`, no `routes`.
+ * - Renders `navGroups` (Overview / Catalog / Sales / Customers / Marketing / Account).
+ * - RTL-aware `side` via `getDirection(locale)`.
+ * - Active state via `usePathname()` from `@/i18n/navigation` (localePrefix as-needed).
+ * - Permission-aware hiding via `usePermissions()` deriving from `useAuth()` (`GET /auth/me`);
+ *   never calls guessed `/users/:id/permissions` or `/auth/permissions`.
+ *   Items with no `permission` are visible to any authenticated user; items with a
+ *   permission are hidden when the current user's permission set lacks it (UX only,
+ *   backend `@Auth()` remains authoritative and returns 403 → denied state).
+ * - Uses `Link from @/i18n/navigation` (not `next/link`) to preserve `en|ar` prefix.
+ * - Client leaf for pathname/permission state; shell layout stays Server.
  */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const locale = useLocale();
+  const pathname = usePathname();
+  const { has, isLoading } = usePermissions();
   const side = getDirection(locale) === "rtl" ? "right" : "left";
 
   return (
@@ -55,12 +105,43 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <div className="p-4 text-sm text-muted-foreground">
-          Navigation will be rebuilt in T22 once a real permission model exists.
-        </div>
+        {isLoading ? (
+          <div className="p-4 text-sm text-muted-foreground" role="status" aria-busy="true">
+            <span className="sr-only">Loading navigation</span>
+            Loading…
+          </div>
+        ) : (
+          navGroups.map((group) => {
+            const visibleItems = group.items.filter((item) => has(item.permission));
+            if (visibleItems.length === 0) return null;
+            return (
+              <SidebarGroup key={group.id}>
+                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {visibleItems.map((item) => {
+                      const Icon = item.icon ? iconMap[item.icon] : undefined;
+                      const active = isActivePath(pathname, item.href);
+                      return (
+                        <SidebarMenuItem key={item.href}>
+                          <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+                            <Link href={item.href as "/"}>
+                              {Icon ? <Icon className="size-4" /> : null}
+                              <span>{item.label}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            );
+          })
+        )}
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-4 text-xs text-muted-foreground">v1.0.0-template</div>
+        <div className="p-4 text-xs text-muted-foreground">v1.0.0</div>
       </SidebarFooter>
     </Sidebar>
   );
